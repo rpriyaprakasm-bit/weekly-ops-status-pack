@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weekly Ops Status Pack</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { background: #0b0f19; color: #e2e8f0; font-family: ui-sans-serif, system-ui, sans-serif; }
+    .glass {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .rag-on-track { background: #16a34a; }
+    .rag-at-risk { background: #ea580c; }
+    .rag-blocked { background: #dc2626; }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+  <div class="max-w-5xl mx-auto">
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+      <div>
+        <p class="text-xs uppercase tracking-wider text-slate-500 mb-1">Weekly Ops Status Pack</p>
+        <h1 id="program" class="text-2xl md:text-3xl font-bold text-white">Program</h1>
+        <p class="text-slate-400 mt-1">Week ending <span id="week-ending"></span></p>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="text-sm text-slate-400">Overall</span>
+        <span id="overall-rag" class="px-4 py-1.5 rounded-full text-sm font-semibold text-white"></span>
+      </div>
+    </header>
+
+    <section class="glass rounded-2xl p-6 mb-6">
+      <h2 class="text-sm uppercase tracking-wider text-slate-400 mb-3">Executive Summary</h2>
+      <p id="summary" class="text-slate-100 leading-relaxed text-lg"></p>
+    </section>
+
+    <section class="mb-6">
+      <h2 class="text-sm uppercase tracking-wider text-slate-400 mb-3">Workstream Snapshot</h2>
+      <div class="glass rounded-2xl overflow-hidden">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-800/80 text-slate-400 text-left">
+            <tr>
+              <th class="px-4 py-3 font-medium">Workstream</th>
+              <th class="px-4 py-3 font-medium">Owner</th>
+              <th class="px-4 py-3 font-medium">RAG</th>
+              <th class="px-4 py-3 font-medium">Update</th>
+            </tr>
+          </thead>
+          <tbody id="ws-body" class="divide-y divide-slate-700/60"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <section class="glass rounded-2xl p-6">
+        <h2 class="text-sm uppercase tracking-wider text-orange-400 mb-3">Top Risks & Asks</h2>
+        <ul id="risks" class="space-y-2 text-slate-300 text-sm"></ul>
+      </section>
+      <section class="glass rounded-2xl p-6">
+        <h2 class="text-sm uppercase tracking-wider text-emerald-400 mb-3">Wins This Week</h2>
+        <ul id="wins" class="space-y-2 text-slate-300 text-sm"></ul>
+      </section>
+    </div>
+
+    <section class="glass rounded-2xl p-6 mb-8">
+      <h2 class="text-sm uppercase tracking-wider text-sky-400 mb-3">Focus for Next Week</h2>
+      <ol id="focus" class="space-y-2 text-slate-300 text-sm list-decimal list-inside"></ol>
+    </section>
+
+    <footer class="text-center text-slate-500 text-sm py-4">
+      Weekly Ops Status Pack · AI-assisted draft for Business Operations review
+    </footer>
+  </div>
+
+  <script>
+    const sample = {
+      week_ending: "2026-07-25",
+      program: "Platform & Infrastructure Operations",
+      overall_rag: "At Risk",
+      executive_summary: "Program is At Risk overall. Legacy storage and office network remain on track; service desk knowledge work continues to deliver visible wins. Two items need leadership attention this week: Identity pilot is Blocked on Security policy review, and Data Centre migration is At Risk pending vendor change-window confirmation. Vendor invoice automation is also At Risk until finance coding rules are finalized. Capacity is tight — avoid new scope until Identity is unblocked.",
+      workstreams: [
+        { name: "Data Centre Migration", owner: "A. Chen", rag: "At Risk", summary_line: "Cutover rehearsal slipped; vendor network change window still unconfirmed." },
+        { name: "Legacy Storage Retirement", owner: "M. Patel", rag: "On Track", summary_line: "70% of volumes migrated; remaining work is low-risk archive data." },
+        { name: "Office Network Refresh", owner: "J. Wong", rag: "On Track", summary_line: "Floors 3–4 complete; 5–6 scheduled next week pending facilities access." },
+        { name: "Identity Platform Transition", owner: "S. Okonkwo", rag: "Blocked", summary_line: "Pilot blocked on conditional access policy review with Security." },
+        { name: "Service Desk Knowledge Base", owner: "R. Singh", rag: "On Track", summary_line: "42 articles live; top incident types now have standard workarounds." },
+        { name: "Vendor Invoice Automation", owner: "L. Berg", rag: "At Risk", summary_line: "UAT in progress; finance coding matrix must land by Friday for go-live confidence." }
+      ],
+      top_risks_and_asks: [
+        "BLOCKED — Identity Platform: pilot cannot expand until Security policy sign-off",
+        "ASK — Identity: Security review slot this week (or interim exception for 15 pilot users)",
+        "AT RISK — Data Centre Migration: vendor change window unconfirmed for target weekend",
+        "ASK — Data Centre: leadership approval for weekend change slot by Wednesday",
+        "AT RISK — Vendor Invoice Automation: coding matrix not final; go-live date at risk",
+        "ASK — Invoice Automation: Finance SME for 90-minute coding workshop",
+        "Office Network: facilities access badges still pending for floor 6 after-hours work"
+      ],
+      wins: [
+        "Data Centre: application inventory freeze completed; rollback runbook reviewed",
+        "Legacy Storage: decommission checklist signed for tranche 2",
+        "Office Network: zero Sev-1 incidents in first cutover window",
+        "Service Desk KB: improved first response on password-reset queue",
+        "Invoice Automation: happy-path invoices processing end-to-end in test"
+      ],
+      focus_next_week: [
+        "Unblock Identity pilot — Security review or time-boxed exception",
+        "Confirm Data Centre vendor change window and weekend approval",
+        "Finish finance coding workshop for invoice automation",
+        "Hold new scope until capacity eases on blocked/at-risk streams"
+      ]
+    };
+
+    function ragClass(rag) {
+      const r = (rag || "").toLowerCase();
+      if (r.includes("block")) return "rag-blocked";
+      if (r.includes("risk")) return "rag-at-risk";
+      return "rag-on-track";
+    }
+
+    function render(data) {
+      document.getElementById("program").textContent = data.program || "Operations";
+      document.getElementById("week-ending").textContent = data.week_ending || "";
+      const badge = document.getElementById("overall-rag");
+      badge.textContent = data.overall_rag || "";
+      badge.className = "px-4 py-1.5 rounded-full text-sm font-semibold text-white " + ragClass(data.overall_rag);
+      document.getElementById("summary").textContent = data.executive_summary || "";
+
+      document.getElementById("ws-body").innerHTML = (data.workstreams || []).map(function (w) {
+        return "<tr>" +
+          "<td class=\"px-4 py-3 font-medium text-white\">" + w.name + "</td>" +
+          "<td class=\"px-4 py-3 text-slate-400\">" + (w.owner || "") + "</td>" +
+          "<td class=\"px-4 py-3\"><span class=\"px-2 py-0.5 rounded text-xs text-white " + ragClass(w.rag) + "\">" + w.rag + "</span></td>" +
+          "<td class=\"px-4 py-3 text-slate-300\">" + (w.summary_line || "") + "</td>" +
+          "</tr>";
+      }).join("");
+
+      document.getElementById("risks").innerHTML = (data.top_risks_and_asks || []).map(function (x) {
+        return "<li class=\"flex gap-2\"><span class=\"text-orange-400\">•</span><span>" + x + "</span></li>";
+      }).join("") || "<li class=\"text-slate-500\">None flagged</li>";
+
+      document.getElementById("wins").innerHTML = (data.wins || []).map(function (x) {
+        return "<li class=\"flex gap-2\"><span class=\"text-emerald-400\">✓</span><span>" + x + "</span></li>";
+      }).join("") || "<li class=\"text-slate-500\">None noted</li>";
+
+      document.getElementById("focus").innerHTML = (data.focus_next_week || []).map(function (x) {
+        return "<li>" + x + "</li>";
+      }).join("") || "<li class=\"text-slate-500\">None</li>";
+    }
+
+    render(sample);
+    fetch("status_pack.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (d && d.workstreams) render(d);
+    }).catch(function () {});
+  </script>
+</body>
+</html>

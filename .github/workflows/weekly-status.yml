@@ -1,0 +1,41 @@
+name: Weekly Ops Status Pack
+
+on:
+  schedule:
+    - cron: "0 14 * * 5"   # Friday 14:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  status-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Build status pack with Grok
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        run: python -m src.analyzers.status_pack_grok
+
+      - name: Publish to docs
+        run: python -m src.reporters.publish_status
+
+      - name: Commit updated pack
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/status_pack.json data/status_pack.md docs/status_pack.json docs/status_pack.md || true
+          git diff --staged --quiet || git commit -m "chore: weekly status pack $(date -u +%Y-%m-%d)"
+          git push || true

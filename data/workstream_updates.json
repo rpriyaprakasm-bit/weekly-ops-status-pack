@@ -1,0 +1,65 @@
+{
+  "week_ending": "2026-07-25",
+  "program": "Platform & Infrastructure Operations",
+  "prepared_for": "Weekly Ops Review",
+  "workstreams": [
+    {
+      "name": "Data Centre Migration",
+      "owner": "A. Chen",
+      "rag": "At Risk",
+      "update": "Cutover rehearsal slipped two days; waiting on network change window confirmation from vendor.",
+      "wins": ["Application inventory freeze completed", "Rollback runbook reviewed with on-call"],
+      "risks": ["Vendor change window still unconfirmed for target weekend"],
+      "asks": ["Leadership approval for weekend change slot by Wednesday"]
+    },
+    {
+      "name": "Legacy Storage Retirement",
+      "owner": "M. Patel",
+      "rag": "On Track",
+      "update": "70% of volumes migrated; remaining share is low-risk archive data.",
+      "wins": ["Decommission checklist signed off for tranche 2"],
+      "risks": [],
+      "asks": []
+    },
+    {
+      "name": "Office Network Refresh",
+      "owner": "J. Wong",
+      "rag": "On Track",
+      "update": "Floor 3–4 cutover complete; floors 5–6 scheduled next week with facilities.",
+      "wins": ["Zero Sev-1 incidents during first cutover window"],
+      "risks": ["Facilities access for after-hours work still pending for floor 6"],
+      "asks": ["Reminder to facilities sponsor for access badges"]
+    },
+    {
+      "name": "Identity Platform Transition",
+      "owner": "S. Okonkwo",
+      "rag": "Blocked",
+      "update": "Pilot group blocked on conditional access policy review with Security.",
+      "wins": [],
+      "risks": ["Pilot cannot expand until policy sign-off", "Training materials on hold"],
+      "asks": ["Security review slot this week", "Interim exception for 15 pilot users if review slips"]
+    },
+    {
+      "name": "Service Desk Knowledge Base",
+      "owner": "R. Singh",
+      "rag": "On Track",
+      "update": "42 articles published; top 10 incident types now have standard workarounds linked in the portal.",
+      "wins": ["Mean time to first response improved on password-reset queue"],
+      "risks": [],
+      "asks": []
+    },
+    {
+      "name": "Vendor Invoice Automation",
+      "owner": "L. Berg",
+      "rag": "At Risk",
+      "update": "Power Automate flow in UAT; finance coding rules still being reconciled for three cost centres.",
+      "wins": ["Happy-path invoices processing end-to-end in test"],
+      "risks": ["Go-live date at risk if coding matrix not final by Friday"],
+      "asks": ["Finance SME time for coding workshop (90 min)"]
+    }
+  ],
+  "cross_cutting_notes": [
+    "Two streams depend on external schedule confirmation (network vendor, Security review).",
+    "Overall program capacity is tight; avoid new scope until Identity pilot is unblocked."
+  ]
+}
