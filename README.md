@@ -6,11 +6,30 @@
 
 ---
 
+## Summary
+
+Business Operations teams often spend Friday mornings stitching status from spreadsheets, email, and ticketing tools. Numbers get out of date, actions lose owners and due dates, and leadership still asks the same questions: billability, what’s red, and what happens next week.
+
+This project turns structured weekly inputs into a single **status pack and dashboard**:
+
+1. **Collect** — Excel/CSV, SharePoint export, and/or Jira  
+2. **Draft** — optional Grok summary (metrics stay from the data; narrative is assisted)  
+3. **Publish** — HTML dashboard + JSON history  
+4. **Notify** — optional Microsoft Teams webhook after each run  
+
+**Triggers:** Power Automate on Friday, GitHub schedule, or manual workflow run.
+
+**Dashboard includes:** business health and delivery RAG, 8 KPI tiles with week-over-week deltas, billability / portfolio RAG / action urgency charts, trend history, program table, full project list, projects at risk, overdue actions, filterable action items with source links, data-quality warnings, and print-friendly layout.
+
+Sample data is embedded so the demo works without secrets. Replace `data/csv/` (or Excel) with live inputs for a real weekly cycle.
+
+---
+
 ## Live demo
 
 **→ [Open dashboard](https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/dashboard.html)**
 
-8 KPIs · billability / RAG / actions graphs · **week-over-week trends** · programs · at-risk projects · dated actions.
+After GitHub Pages is enabled: `https://rpriyaprakasm-bit.github.io/weekly-ops-status-pack/dashboard.html`
 
 ---
 
