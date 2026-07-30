@@ -22,10 +22,12 @@
     .tile-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
     .tile-label { font-size: 0.7rem; color: #94a3b8; margin-top: 0.35rem; }
     .tile-sub { font-size: 0.65rem; color: #64748b; margin-top: 0.15rem; }
+    .bar-track { background: #1e293b; border-radius: 999px; height: 12px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; }
   </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
-  <div class="max-w-6xl mx-auto">
+  <div class="max-w-5xl mx-auto">
 
     <header class="mb-6">
       <p class="text-xs uppercase tracking-wider text-slate-500 mb-1">Weekly Business Operations Status Pack</p>
@@ -50,10 +52,26 @@
       </div>
     </header>
 
-    <!-- Business Operations KPI tiles -->
+    <!-- 8 decision tiles -->
     <h2 class="text-sm uppercase tracking-wider text-slate-400 mb-3">Key metrics</h2>
-    <div id="kpi-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-3"></div>
+    <div id="kpi-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3"></div>
     <p id="headcount-notes" class="text-sm text-slate-400 mb-6"></p>
+
+    <!-- Graphs -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+      <div class="glass rounded-2xl p-5">
+        <h3 class="text-sm uppercase tracking-wider text-slate-400 mb-4">Billability vs target</h3>
+        <div id="graph-billable"></div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <h3 class="text-sm uppercase tracking-wider text-slate-400 mb-4">Project portfolio RAG</h3>
+        <div id="graph-projects" class="flex flex-col sm:flex-row items-center gap-4"></div>
+      </div>
+      <div class="glass rounded-2xl p-5">
+        <h3 class="text-sm uppercase tracking-wider text-slate-400 mb-4">Actions by urgency</h3>
+        <div id="graph-actions"></div>
+      </div>
+    </div>
 
     <section class="glass rounded-2xl p-6 mb-6">
       <h2 class="text-sm uppercase tracking-wider text-slate-400 mb-3">Executive Summary</h2>
@@ -134,8 +152,6 @@
         billable_pct: 79,
         target_billable_pct: 85,
         bench: 3,
-        on_leave_or_coverage: 1,
-        internal_enablement: 2,
         notes: "Below target; 2 on internal enablement, 1 leave coverage, 3 bench pending client start."
       },
       metrics: {
@@ -150,11 +166,7 @@
         high_priority_actions: 3,
         overdue_actions: 0,
         actions_due_7_days: 5,
-        milestones_next_14_days: 3,
-        wins_this_week: 4,
-        client_projects: 3,
-        internal_projects: 3,
-        utilization_gap_pct: 6
+        milestones_next_14_days: 3
       },
       programs: [
         { name: "Client Delivery Portfolio", owner: "P. Sharma", rag: "At Risk", next_milestone: "Q3 checkpoint — 2026-08-15", summary_line: "Revenue on plan; risk concentrated in North Region and Platform Modernization." },
@@ -201,7 +213,7 @@
     }
 
     function tile(value, label, sub, valueClass) {
-      return '<div class="glass rounded-xl p-3 text-center">' +
+      return '<div class="glass rounded-xl p-4 text-center">' +
         '<div class="tile-value ' + (valueClass || "text-white") + '">' + value + '</div>' +
         '<div class="tile-label">' + label + '</div>' +
         (sub ? '<div class="tile-sub">' + sub + '</div>' : '') +
@@ -233,16 +245,13 @@
         }).length;
       }
       if (m.projects_at_risk == null) m.projects_at_risk = atRisk.length;
-      if (m.programs_total == null) m.programs_total = programs.length;
-      if (m.programs_on_track == null) m.programs_on_track = programs.filter(function (p) {
-        return (p.rag || "").toLowerCase().indexOf("track") >= 0;
-      }).length;
-      if (m.programs_at_risk == null) m.programs_at_risk = programs.filter(function (p) {
-        return (p.rag || "").toLowerCase().indexOf("risk") >= 0 || (p.rag || "").toLowerCase().indexOf("block") >= 0;
-      }).length;
-      if (m.wins_this_week == null) m.wins_this_week = (data.wins || []).length;
-      if (m.utilization_gap_pct == null && hc.target_billable_pct != null && hc.billable_pct != null) {
-        m.utilization_gap_pct = Math.max(0, hc.target_billable_pct - hc.billable_pct);
+      if (m.projects_on_track == null && m.active_projects != null) {
+        m.projects_on_track = Math.max(0, m.active_projects - (m.projects_at_risk || 0) - (m.projects_blocked || 0));
+      }
+      if (m.programs_at_risk == null) {
+        m.programs_at_risk = programs.filter(function (p) {
+          return (p.rag || "").toLowerCase().indexOf("risk") >= 0 || (p.rag || "").toLowerCase().indexOf("block") >= 0;
+        }).length;
       }
       return { m: m, hc: hc };
     }
@@ -250,33 +259,99 @@
     function renderKpis(data) {
       var d = deriveMetrics(data);
       var m = d.m, hc = d.hc;
-      var gap = m.utilization_gap_pct != null ? m.utilization_gap_pct : "—";
-      var gapClass = (typeof gap === "number" && gap > 0) ? "text-orange-400" : "text-emerald-400";
+      var below = hc.billable_pct != null && hc.target_billable_pct != null && hc.billable_pct < hc.target_billable_pct;
 
       var html = "";
       html += tile(
         (hc.billable_pct != null ? hc.billable_pct + "%" : "—"),
         "Billable %",
         "Target " + (hc.target_billable_pct != null ? hc.target_billable_pct + "%" : "—"),
-        hc.billable_pct != null && hc.target_billable_pct != null && hc.billable_pct < hc.target_billable_pct ? "text-orange-400" : "text-emerald-400"
+        below ? "text-orange-400" : "text-emerald-400"
       );
-      html += tile(gap === "—" ? "—" : gap + " pts", "Utilization gap", "Below target", gapClass);
-      html += tile(hc.billable != null ? hc.billable : "—", "Billable HC", "of " + (hc.total != null ? hc.total : "—") + " total", "text-emerald-400");
-      html += tile(hc.non_billable != null ? hc.non_billable : "—", "Non-billable HC", (hc.bench != null ? hc.bench + " on bench" : ""), "text-slate-200");
       html += tile(hc.bench != null ? hc.bench : "—", "Bench", "Awaiting client start", "text-amber-300");
       html += tile(m.projects_at_risk != null ? m.projects_at_risk : "—", "Projects at risk", (m.active_projects != null ? m.active_projects + " active total" : ""), "text-orange-400");
-      html += tile(m.projects_on_track != null ? m.projects_on_track : "—", "Projects on track", (m.client_projects != null ? m.client_projects + " client / " + (m.internal_projects || 0) + " internal" : ""), "text-emerald-400");
-      html += tile(m.programs_on_track != null ? m.programs_on_track : "—", "Programs on track", "of " + (m.programs_total != null ? m.programs_total : "—"), "text-sky-300");
-      html += tile(m.programs_at_risk != null ? m.programs_at_risk : "—", "Programs at risk", "Need leadership focus", m.programs_at_risk ? "text-orange-400" : "text-emerald-400");
+      html += tile(m.programs_at_risk != null ? m.programs_at_risk : "—", "Programs at risk", "Leadership focus", m.programs_at_risk ? "text-orange-400" : "text-emerald-400");
       html += tile(m.open_actions != null ? m.open_actions : "—", "Open actions", (m.high_priority_actions != null ? m.high_priority_actions + " high priority" : ""), "text-white");
       html += tile(m.overdue_actions != null ? m.overdue_actions : "—", "Overdue actions", m.overdue_actions ? "Escalate" : "None past due", m.overdue_actions ? "text-red-400" : "text-emerald-400");
       html += tile(m.actions_due_7_days != null ? m.actions_due_7_days : "—", "Actions due ≤7 days", "Including this week", "text-amber-200");
       html += tile(m.milestones_next_14_days != null ? m.milestones_next_14_days : "—", "Milestones ≤14 days", "Program checkpoints", "text-sky-300");
-      html += tile(m.wins_this_week != null ? m.wins_this_week : "—", "Wins this week", "Positive delivery signal", "text-emerald-400");
-      html += tile(m.client_projects != null ? m.client_projects : "—", "Client projects", "Billable delivery", "text-white");
-      html += tile(m.internal_projects != null ? m.internal_projects : "—", "Internal projects", "Enablement / finance / ops", "text-slate-300");
 
       document.getElementById("kpi-grid").innerHTML = html;
+    }
+
+    function renderGraphs(data) {
+      var d = deriveMetrics(data);
+      var m = d.m, hc = d.hc;
+
+      // Billability vs target
+      var actual = hc.billable_pct != null ? hc.billable_pct : 0;
+      var target = hc.target_billable_pct != null ? hc.target_billable_pct : 100;
+      var gap = Math.max(0, target - actual);
+      var actualColor = actual < target ? "#ea580c" : "#16a34a";
+      document.getElementById("graph-billable").innerHTML =
+        '<div class="mb-3">' +
+          '<div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">Actual</span><span class="font-semibold" style="color:' + actualColor + '">' + actual + '%</span></div>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + Math.min(actual, 100) + '%;background:' + actualColor + '"></div></div>' +
+        '</div>' +
+        '<div class="mb-3">' +
+          '<div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">Target</span><span class="text-slate-400">' + target + '%</span></div>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + Math.min(target, 100) + '%;background:#38bdf8"></div></div>' +
+        '</div>' +
+        '<p class="text-xs text-slate-500 mt-2">Gap: <span class="' + (gap > 0 ? 'text-orange-400' : 'text-emerald-400') + '">' + gap + ' pts</span>' +
+          (hc.billable != null ? ' · ' + hc.billable + ' billable / ' + (hc.total || '—') + ' total' : '') + '</p>';
+
+      // Project portfolio RAG donut
+      var onTrack = m.projects_on_track != null ? m.projects_on_track : 0;
+      var atRisk = m.projects_at_risk != null ? m.projects_at_risk : 0;
+      var blocked = m.projects_blocked != null ? m.projects_blocked : 0;
+      var totalP = onTrack + atRisk + blocked || 1;
+      var r = 40, circ = 2 * Math.PI * r;
+      var lenOT = (onTrack / totalP) * circ;
+      var lenAR = (atRisk / totalP) * circ;
+      var lenBL = (blocked / totalP) * circ;
+      var off = 0;
+      var slices = '';
+      if (onTrack > 0) {
+        slices += '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="#16a34a" stroke-width="14" stroke-dasharray="' + lenOT + ' ' + (circ - lenOT) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 50 50)" />';
+        off += lenOT;
+      }
+      if (atRisk > 0) {
+        slices += '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="#ea580c" stroke-width="14" stroke-dasharray="' + lenAR + ' ' + (circ - lenAR) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 50 50)" />';
+        off += lenAR;
+      }
+      if (blocked > 0) {
+        slices += '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="#dc2626" stroke-width="14" stroke-dasharray="' + lenBL + ' ' + (circ - lenBL) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 50 50)" />';
+      }
+      document.getElementById("graph-projects").innerHTML =
+        '<svg width="100" height="100" viewBox="0 0 100 100" class="shrink-0">' +
+          '<circle cx="50" cy="50" r="' + r + '" fill="none" stroke="#1e293b" stroke-width="14" />' +
+          slices +
+          '<text x="50" y="54" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">' + totalP + '</text>' +
+        '</svg>' +
+        '<div class="text-sm space-y-2 w-full">' +
+          '<div class="flex justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>On track</span><span class="text-slate-300">' + onTrack + '</span></div>' +
+          '<div class="flex justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-orange-500"></span>At risk</span><span class="text-slate-300">' + atRisk + '</span></div>' +
+          '<div class="flex justify-between"><span class="flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-red-600"></span>Blocked</span><span class="text-slate-300">' + blocked + '</span></div>' +
+        '</div>';
+
+      // Actions by urgency horizontal bars
+      var openA = m.open_actions || 0;
+      var highA = m.high_priority_actions || 0;
+      var due7 = m.actions_due_7_days || 0;
+      var overdue = m.overdue_actions || 0;
+      var maxA = Math.max(openA, highA, due7, overdue, 1);
+      function actionBar(label, val, color) {
+        var pct = Math.round((val / maxA) * 100);
+        return '<div class="mb-3">' +
+          '<div class="flex justify-between text-xs mb-1"><span class="text-slate-400">' + label + '</span><span class="text-slate-200">' + val + '</span></div>' +
+          '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%;background:' + color + '"></div></div>' +
+        '</div>';
+      }
+      document.getElementById("graph-actions").innerHTML =
+        actionBar("Open", openA, "#94a3b8") +
+        actionBar("High priority", highA, "#ea580c") +
+        actionBar("Due ≤7 days", due7, "#facc15") +
+        actionBar("Overdue", overdue, overdue ? "#dc2626" : "#16a34a");
     }
 
     function render(data) {
@@ -293,8 +368,8 @@
       badge.className = "inline-block px-3 py-1 rounded-full text-sm font-semibold text-white " + ragClass(data.overall_rag);
 
       renderKpis(data);
+      renderGraphs(data);
       document.getElementById("headcount-notes").textContent = (data.headcount && data.headcount.notes) || "";
-
       document.getElementById("summary").textContent = data.executive_summary || "";
 
       document.getElementById("program-body").innerHTML = (data.programs || []).map(function (p) {
@@ -342,7 +417,7 @@
     }
 
     render(sample);
-    fetch("status_pack.json").then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+    fetch("status_pack.json?v=2").then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
       if (d && (d.programs || d.action_items)) render(d);
     }).catch(function () {});
   </script>
