@@ -1,8 +1,9 @@
-"""Copy status outputs into docs/ for the dashboard."""
+"""Copy status outputs into docs/ for the dashboard; record history."""
 
-import json
 import shutil
 from pathlib import Path
+
+from src.reporters.record_history import record
 
 
 def publish():
@@ -19,6 +20,8 @@ def publish():
     if md.exists():
         shutil.copy(md, docs / "status_pack.md")
         print("Published docs/status_pack.md")
+
+    record()
 
 
 if __name__ == "__main__":

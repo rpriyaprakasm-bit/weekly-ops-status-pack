@@ -1,11 +1,9 @@
 name: Weekly Ops Status Pack
 
 on:
-  # Native GitHub schedule (Friday 14:00 UTC)
   schedule:
     - cron: "0 14 * * 5"
 
-  # Manual run from Actions tab
   workflow_dispatch:
     inputs:
       input_source:
@@ -18,9 +16,6 @@ on:
           - jira
           - excel+jira
 
-  # Power Automate (or any HTTP client) — Friday flow calls this
-  # POST /repos/{owner}/{repo}/dispatches
-  # body: { "event_type": "weekly-ops-status", "client_payload": { "input_source": "excel" } }
   repository_dispatch:
     types: [weekly-ops-status]
 
@@ -46,7 +41,6 @@ jobs:
       - name: Resolve input source
         id: src
         run: |
-          # Priority: workflow_dispatch input → repository_dispatch payload → default excel
           SRC="${{ github.event.inputs.input_source }}"
           if [ -z "$SRC" ] || [ "$SRC" = "" ]; then
             SRC="${{ github.event.client_payload.input_source }}"
@@ -70,13 +64,19 @@ jobs:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
         run: python -m src.analyzers.status_pack_grok
 
-      - name: Publish to docs
+      - name: Publish to docs + record history
         run: python -m src.reporters.publish_status
+
+      - name: Notify Teams
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: python -m src.reporters.notify_teams
 
       - name: Commit updated pack
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/workstream_updates.json data/status_pack.json data/status_pack.md docs/status_pack.json docs/status_pack.md || true
+          git add data/workstream_updates.json data/status_pack.json data/status_pack.md data/history.json \
+            docs/status_pack.json docs/status_pack.md docs/history.json || true
           git diff --staged --quiet || git commit -m "chore: weekly status pack $(date -u +%Y-%m-%d)"
           git push || true
