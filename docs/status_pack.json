@@ -1,66 +1,120 @@
 {
   "week_ending": "2026-07-25",
-  "program": "Platform & Infrastructure Operations",
+  "report_date": "2026-07-25",
+  "period": "Week of 2026-07-21 to 2026-07-25",
+  "program": "Business Operations — Delivery & Enablement",
+  "overall_business_health": "Watch",
   "overall_rag": "At Risk",
-  "executive_summary": "Program is At Risk overall. Legacy storage and office network remain on track; service desk knowledge work continues to deliver visible wins. Two items need leadership attention this week: Identity pilot is Blocked on Security policy review, and Data Centre migration is At Risk pending vendor change-window confirmation. Vendor invoice automation is also At Risk until finance coding rules are finalized. Capacity is tight — avoid new scope until Identity is unblocked.",
-  "workstreams": [
+  "executive_summary": "Business health is Watch; overall delivery RAG is At Risk. Client portfolio carries two at-risk projects (North Region UAT slip; Platform Modernization scope CR). Billability is 79% vs 85% target — three people on bench and internal enablement load. AI & Automation Enablement and Finance Close remain On Track. Priority this week: clear the two client risks with dated actions, and move bench capacity into confirmed South Region billable seats.",
+  "headcount": {
+    "total": 28,
+    "billable": 22,
+    "non_billable": 6,
+    "billable_pct": 79,
+    "target_billable_pct": 85,
+    "notes": "Below target; 2 on internal enablement, 1 leave coverage, 3 bench pending client start."
+  },
+  "programs": [
     {
-      "name": "Data Centre Migration",
-      "owner": "A. Chen",
+      "name": "Client Delivery Portfolio",
+      "owner": "P. Sharma",
       "rag": "At Risk",
-      "summary_line": "Cutover rehearsal slipped; vendor network change window still unconfirmed."
+      "next_milestone": "Q3 checkpoint — 2026-08-15",
+      "summary_line": "Revenue on plan; risk concentrated in North Region and Platform Modernization."
     },
     {
-      "name": "Legacy Storage Retirement",
-      "owner": "M. Patel",
+      "name": "AI & Automation Enablement",
+      "owner": "R. Prakasam",
       "rag": "On Track",
-      "summary_line": "70% of volumes migrated; remaining work is low-risk archive data."
+      "next_milestone": "Pilot value readout — 2026-08-08",
+      "summary_line": "Pilots active; three teams trained; intake scoring in test."
     },
     {
-      "name": "Office Network Refresh",
-      "owner": "J. Wong",
+      "name": "Finance Ops Close Support",
+      "owner": "L. Nguyen",
       "rag": "On Track",
-      "summary_line": "Floors 3–4 complete; 5–6 scheduled next week pending facilities access."
-    },
-    {
-      "name": "Identity Platform Transition",
-      "owner": "S. Okonkwo",
-      "rag": "Blocked",
-      "summary_line": "Pilot blocked on conditional access policy review with Security."
-    },
-    {
-      "name": "Service Desk Knowledge Base",
-      "owner": "R. Singh",
-      "rag": "On Track",
-      "summary_line": "42 articles live; top incident types now have standard workarounds."
-    },
-    {
-      "name": "Vendor Invoice Automation",
-      "owner": "L. Berg",
-      "rag": "At Risk",
-      "summary_line": "UAT in progress; finance coding matrix must land by Friday for go-live confidence."
+      "next_milestone": "July close sign-off — 2026-08-05",
+      "summary_line": "Close checklist on schedule; one vendor reconciliation open."
     }
   ],
-  "top_risks_and_asks": [
-    "BLOCKED — Identity Platform: pilot cannot expand until Security policy sign-off",
-    "ASK — Identity: Security review slot this week (or interim exception for 15 pilot users)",
-    "AT RISK — Data Centre Migration: vendor change window unconfirmed for target weekend",
-    "ASK — Data Centre: leadership approval for weekend change slot by Wednesday",
-    "AT RISK — Vendor Invoice Automation: coding matrix not final; go-live date at risk",
-    "ASK — Invoice Automation: Finance SME for 90-minute coding workshop",
-    "Office Network: facilities access badges still pending for floor 6 after-hours work"
+  "projects_at_risk": [
+    {
+      "name": "North Region Account — Q3 Delivery",
+      "owner": "A. Chen",
+      "rag": "At Risk",
+      "target_end": "2026-09-30",
+      "summary_line": "M3 slipped 8 days; client UAT environment unstable.",
+      "billable": true
+    },
+    {
+      "name": "Platform Modernization (Fixed Price)",
+      "owner": "M. Patel",
+      "rag": "At Risk",
+      "target_end": "2026-08-29",
+      "summary_line": "Reporting scope creep; change request not yet approved.",
+      "billable": true
+    }
+  ],
+  "action_items": [
+    {
+      "id": "AI-01",
+      "action": "Confirm UAT environment fix plan with North Region client",
+      "owner": "A. Chen",
+      "due": "2026-07-29",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-02",
+      "action": "Submit change request for Platform Modernization reporting scope",
+      "owner": "M. Patel",
+      "due": "2026-07-30",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-03",
+      "action": "Finance SME workshop on invoice coding rules (90 min)",
+      "owner": "L. Nguyen",
+      "due": "2026-07-31",
+      "status": "Scheduled",
+      "priority": "Medium"
+    },
+    {
+      "id": "AI-04",
+      "action": "Reassign 2 bench resources to South Region onboarding (billable)",
+      "owner": "P. Sharma",
+      "due": "2026-08-01",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-05",
+      "action": "Publish pilot value readout agenda for AI enablement",
+      "owner": "R. Prakasam",
+      "due": "2026-08-05",
+      "status": "Open",
+      "priority": "Medium"
+    },
+    {
+      "id": "AI-06",
+      "action": "Close vendor invoice reconciliation for July close",
+      "owner": "L. Nguyen",
+      "due": "2026-08-04",
+      "status": "Open",
+      "priority": "Medium"
+    }
   ],
   "wins": [
-    "Data Centre: application inventory freeze completed; rollback runbook reviewed",
-    "Legacy Storage: decommission checklist signed for tranche 2",
-    "Office Network: zero Sev-1 incidents in first cutover window",
-    "Service Desk KB: improved first response on password-reset queue",
-    "Invoice Automation: happy-path invoices processing end-to-end in test"
+    "AI enablement: 3 teams trained on status automation pattern this week",
+    "South Region: 9 of 12 onboarding seats confirmed billable",
+    "Finance ops: accruals review completed on schedule",
+    "Status pack pilot adopted by delivery leads for Friday review"
   ],
   "focus_next_week": [
-    "Unblock Identity pilot — Security review or time-boxed exception",
-    "Confirm Data Centre vendor change window and weekend approval",
-    "Finish finance coding workshop for invoice automation",
-    "Hold new scope until capacity eases on blocked/at-risk streams"
+    "Clear North Region UAT blocker and Platform Modernization CR (due 29–30 Jul)",
+    "Move bench capacity onto South Region billable seats (due 1 Aug)",
+    "Protect July close timeline — finish vendor reconciliation",
+    "Hold non-critical internal work if client delivery needs surge capacity"
   ]
 }

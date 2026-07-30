@@ -1,65 +1,167 @@
 {
   "week_ending": "2026-07-25",
-  "program": "Platform & Infrastructure Operations",
-  "prepared_for": "Weekly Ops Review",
-  "workstreams": [
+  "report_date": "2026-07-25",
+  "period": "Week of 2026-07-21 to 2026-07-25",
+  "program": "Business Operations — Delivery & Enablement",
+  "prepared_for": "Weekly Business Operations Review",
+  "prepared_by": "Business Operations",
+  "overall_business_health": "Watch",
+  "overall_rag": "At Risk",
+  "headcount": {
+    "total": 28,
+    "billable": 22,
+    "non_billable": 6,
+    "billable_pct": 79,
+    "target_billable_pct": 85,
+    "notes": "Billability below target; 2 people on internal enablement, 1 on long-term leave coverage, 3 on bench between client starts."
+  },
+  "programs": [
     {
-      "name": "Data Centre Migration",
-      "owner": "A. Chen",
+      "name": "Client Delivery Portfolio",
+      "owner": "P. Sharma",
       "rag": "At Risk",
-      "update": "Cutover rehearsal slipped two days; waiting on network change window confirmation from vendor.",
-      "wins": ["Application inventory freeze completed", "Rollback runbook reviewed with on-call"],
-      "risks": ["Vendor change window still unconfirmed for target weekend"],
-      "asks": ["Leadership approval for weekend change slot by Wednesday"]
+      "health_note": "Two accounts behind on milestones; utilization healthy but margin pressure on one fixed-price engagement.",
+      "next_milestone": "Q3 checkpoint — 2026-08-15",
+      "update": "Portfolio revenue on plan; delivery risk concentrated in North Region account and Platform Modernization fixed-price."
     },
     {
-      "name": "Legacy Storage Retirement",
-      "owner": "M. Patel",
+      "name": "AI & Automation Enablement",
+      "owner": "R. Prakasam",
       "rag": "On Track",
-      "update": "70% of volumes migrated; remaining share is low-risk archive data.",
-      "wins": ["Decommission checklist signed off for tranche 2"],
-      "risks": [],
-      "asks": []
+      "health_note": "Intake backlog prioritized; two pilots in flight; CoP session scheduled.",
+      "next_milestone": "Pilot value readout — 2026-08-08",
+      "update": "Weekly status automation and risk scan patterns in use; training for 3 teams completed this week."
     },
     {
-      "name": "Office Network Refresh",
-      "owner": "J. Wong",
+      "name": "Finance Ops Close Support",
+      "owner": "L. Nguyen",
       "rag": "On Track",
-      "update": "Floor 3–4 cutover complete; floors 5–6 scheduled next week with facilities.",
-      "wins": ["Zero Sev-1 incidents during first cutover window"],
-      "risks": ["Facilities access for after-hours work still pending for floor 6"],
-      "asks": ["Reminder to facilities sponsor for access badges"]
-    },
-    {
-      "name": "Identity Platform Transition",
-      "owner": "S. Okonkwo",
-      "rag": "Blocked",
-      "update": "Pilot group blocked on conditional access policy review with Security.",
-      "wins": [],
-      "risks": ["Pilot cannot expand until policy sign-off", "Training materials on hold"],
-      "asks": ["Security review slot this week", "Interim exception for 15 pilot users if review slips"]
-    },
-    {
-      "name": "Service Desk Knowledge Base",
-      "owner": "R. Singh",
-      "rag": "On Track",
-      "update": "42 articles published; top 10 incident types now have standard workarounds linked in the portal.",
-      "wins": ["Mean time to first response improved on password-reset queue"],
-      "risks": [],
-      "asks": []
-    },
-    {
-      "name": "Vendor Invoice Automation",
-      "owner": "L. Berg",
-      "rag": "At Risk",
-      "update": "Power Automate flow in UAT; finance coding rules still being reconciled for three cost centres.",
-      "wins": ["Happy-path invoices processing end-to-end in test"],
-      "risks": ["Go-live date at risk if coding matrix not final by Friday"],
-      "asks": ["Finance SME time for coding workshop (90 min)"]
+      "health_note": "Month-end checklist on schedule; no critical blockers.",
+      "next_milestone": "July close sign-off — 2026-08-05",
+      "update": "Accruals review complete; pending one vendor invoice reconciliation."
     }
   ],
+  "projects": [
+    {
+      "name": "North Region Account — Q3 Delivery",
+      "program": "Client Delivery Portfolio",
+      "owner": "A. Chen",
+      "rag": "At Risk",
+      "start": "2026-05-01",
+      "target_end": "2026-09-30",
+      "update": "Milestone M3 slipped 8 days; client UAT environment still unstable.",
+      "billable": true
+    },
+    {
+      "name": "Platform Modernization (Fixed Price)",
+      "program": "Client Delivery Portfolio",
+      "owner": "M. Patel",
+      "rag": "At Risk",
+      "start": "2026-03-15",
+      "target_end": "2026-08-29",
+      "update": "Scope creep on reporting module; change request not yet approved.",
+      "billable": true
+    },
+    {
+      "name": "Weekly Status Automation Pilot",
+      "program": "AI & Automation Enablement",
+      "owner": "R. Prakasam",
+      "rag": "On Track",
+      "start": "2026-07-01",
+      "target_end": "2026-08-08",
+      "update": "Demo pack live; pilot team using draft for Friday review.",
+      "billable": false
+    },
+    {
+      "name": "Intake & Value Scoring Rollout",
+      "program": "AI & Automation Enablement",
+      "owner": "S. Okonkwo",
+      "rag": "On Track",
+      "start": "2026-07-10",
+      "target_end": "2026-09-15",
+      "update": "Scoring rubric agreed; form prototype in test with 5 requestors.",
+      "billable": false
+    },
+    {
+      "name": "July Month-End Close",
+      "program": "Finance Ops Close Support",
+      "owner": "L. Nguyen",
+      "rag": "On Track",
+      "start": "2026-07-25",
+      "target_end": "2026-08-05",
+      "update": "Checklist 60% complete; no items past due.",
+      "billable": false
+    },
+    {
+      "name": "South Region Onboarding Wave",
+      "program": "Client Delivery Portfolio",
+      "owner": "J. Wong",
+      "rag": "On Track",
+      "start": "2026-07-01",
+      "target_end": "2026-08-20",
+      "update": "12 resources mapped; 9 billable seats confirmed with client.",
+      "billable": true
+    }
+  ],
+  "action_items": [
+    {
+      "id": "AI-01",
+      "action": "Confirm UAT environment fix plan with North Region client",
+      "owner": "A. Chen",
+      "due": "2026-07-29",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-02",
+      "action": "Submit change request for Platform Modernization reporting scope",
+      "owner": "M. Patel",
+      "due": "2026-07-30",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-03",
+      "action": "Finance SME workshop on invoice coding rules (90 min)",
+      "owner": "L. Nguyen",
+      "due": "2026-07-31",
+      "status": "Scheduled",
+      "priority": "Medium"
+    },
+    {
+      "id": "AI-04",
+      "action": "Reassign 2 bench resources to South Region onboarding (billable)",
+      "owner": "P. Sharma",
+      "due": "2026-08-01",
+      "status": "Open",
+      "priority": "High"
+    },
+    {
+      "id": "AI-05",
+      "action": "Publish pilot value readout agenda for AI enablement",
+      "owner": "R. Prakasam",
+      "due": "2026-08-05",
+      "status": "Open",
+      "priority": "Medium"
+    },
+    {
+      "id": "AI-06",
+      "action": "Close vendor invoice reconciliation for July close",
+      "owner": "L. Nguyen",
+      "due": "2026-08-04",
+      "status": "Open",
+      "priority": "Medium"
+    }
+  ],
+  "wins": [
+    "AI enablement: 3 teams trained on status automation pattern this week",
+    "South Region: 9 of 12 onboarding seats confirmed billable",
+    "Finance ops: accruals review completed on schedule",
+    "Status pack pilot adopted by delivery leads for Friday review"
+  ],
   "cross_cutting_notes": [
-    "Two streams depend on external schedule confirmation (network vendor, Security review).",
-    "Overall program capacity is tight; avoid new scope until Identity pilot is unblocked."
+    "Billability at 79% vs 85% target — priority is moving bench into South Region seats.",
+    "Two client projects At Risk; both have dated action items this week.",
+    "Internal AI/enablement work is non-billable by design; protect capacity for client delivery first."
   ]
 }
