@@ -5,105 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
   <title>Weekly Ops Status Pack</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: #0b0f19;
-      color: #e2e8f0;
-      font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-      min-height: 100vh;
-      padding: 1.5rem;
-    }
+    body { margin: 0; background: #0b0f19; color: #e2e8f0; font-family: ui-sans-serif, system-ui, sans-serif; min-height: 100vh; padding: 1.5rem; }
     .wrap { max-width: 1100px; margin: 0 auto; }
-    .glass {
-      background: rgba(30, 41, 59, 0.9);
-      border: 1px solid rgba(148, 163, 184, 0.15);
-      border-radius: 12px;
-    }
-    /* Force horizontal tile grid — do not rely on Tailwind alone */
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    @media (max-width: 900px) {
-      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 480px) {
-      .kpi-grid { grid-template-columns: 1fr 1fr; }
-    }
-    .kpi-tile {
-      background: rgba(30, 41, 59, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.14);
-      border-radius: 12px;
-      padding: 16px 12px;
-      text-align: center;
-      min-height: 96px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+    .glass { background: rgba(30, 41, 59, 0.9); border: 1px solid rgba(148, 163, 184, 0.15); border-radius: 12px; }
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
+    @media (max-width: 900px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+    .kpi-tile { background: rgba(30, 41, 59, 0.95); border: 1px solid rgba(148, 163, 184, 0.14); border-radius: 12px; padding: 16px 12px; text-align: center; min-height: 96px; display: flex; flex-direction: column; justify-content: center; }
     .kpi-tile .val { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
     .kpi-tile .lab { font-size: 0.72rem; color: #94a3b8; margin-top: 6px; font-weight: 500; }
     .kpi-tile .sub { font-size: 0.65rem; color: #64748b; margin-top: 3px; }
-    .graphs {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin: 20px 0 24px;
-    }
-    @media (max-width: 900px) {
-      .graphs { grid-template-columns: 1fr; }
-    }
+    .graphs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 20px 0 24px; }
+    @media (max-width: 900px) { .graphs { grid-template-columns: 1fr; } }
     .graph-card { padding: 18px; }
-    .graph-card h3 {
-      margin: 0 0 14px;
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
-      font-weight: 600;
-    }
+    .graph-card h3 { margin: 0 0 14px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; font-weight: 600; }
     .bar-track { background: #1e293b; border-radius: 999px; height: 11px; overflow: hidden; }
     .bar-fill { height: 100%; border-radius: 999px; }
-    .badge {
-      display: inline-block;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #fff;
-    }
-    .rag-on-track { background: #16a34a; }
-    .rag-at-risk { background: #ea580c; }
-    .rag-blocked { background: #dc2626; }
-    .health-watch { background: #ca8a04; }
-    .health-good { background: #16a34a; }
-    .health-poor { background: #dc2626; }
-    .pri-high { color: #fb923c; }
-    .pri-medium { color: #facc15; }
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; font-weight: 600; color: #fff; }
+    .rag-on-track { background: #16a34a; } .rag-at-risk { background: #ea580c; } .rag-blocked { background: #dc2626; }
+    .health-watch { background: #ca8a04; } .health-good { background: #16a34a; } .health-poor { background: #dc2626; }
+    .pri-high { color: #fb923c; } .pri-medium { color: #facc15; }
     table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
     th { text-align: left; padding: 12px 16px; color: #94a3b8; font-weight: 500; background: rgba(15, 23, 42, 0.5); }
     td { padding: 12px 16px; border-top: 1px solid rgba(51, 65, 85, 0.6); }
-    .section-title {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: #94a3b8;
-      margin: 0 0 10px;
-      font-weight: 600;
-    }
-    .header-row {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    .section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; margin: 0 0 10px; font-weight: 600; }
+    .header-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 24px; }
     .badge-row { display: flex; gap: 12px; flex-wrap: wrap; }
     .badge-block { text-align: center; }
     .badge-block .lbl { font-size: 0.65rem; text-transform: uppercase; color: #64748b; margin-bottom: 4px; }
@@ -111,24 +38,15 @@
 </head>
 <body>
   <div class="wrap">
-
     <div class="header-row">
       <div>
         <p style="margin:0 0 4px;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:#64748b;">Weekly Business Operations Status Pack</p>
         <h1 id="program" style="margin:0;font-size:1.75rem;color:#fff;">Business Operations</h1>
-        <p style="margin:6px 0 0;color:#94a3b8;font-size:0.9rem;">
-          <span id="period"></span> · Report date <span id="report-date" style="color:#cbd5e1;"></span>
-        </p>
+        <p style="margin:6px 0 0;color:#94a3b8;font-size:0.9rem;"><span id="period"></span> · Report date <span id="report-date" style="color:#cbd5e1;"></span></p>
       </div>
       <div class="badge-row">
-        <div class="badge-block">
-          <div class="lbl">Business health</div>
-          <span id="health-badge" class="badge"></span>
-        </div>
-        <div class="badge-block">
-          <div class="lbl">Delivery RAG</div>
-          <span id="overall-rag" class="badge"></span>
-        </div>
+        <div class="badge-block"><div class="lbl">Business health</div><span id="health-badge" class="badge"></span></div>
+        <div class="badge-block"><div class="lbl">Delivery RAG</div><span id="overall-rag" class="badge"></span></div>
       </div>
     </div>
 
@@ -137,18 +55,16 @@
     <p id="headcount-notes" style="font-size:0.85rem;color:#94a3b8;margin:8px 0 0;"></p>
 
     <div class="graphs">
-      <div class="glass graph-card">
-        <h3>Billability vs target</h3>
-        <div id="graph-billable"></div>
-      </div>
-      <div class="glass graph-card">
-        <h3>Project portfolio RAG</h3>
-        <div id="graph-projects" style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;"></div>
-      </div>
-      <div class="glass graph-card">
-        <h3>Actions by urgency</h3>
-        <div id="graph-actions"></div>
-      </div>
+      <div class="glass graph-card"><h3>Billability vs target</h3><div id="graph-billable"></div></div>
+      <div class="glass graph-card"><h3>Project portfolio RAG</h3><div id="graph-projects" style="display:flex;flex-wrap:wrap;align-items:center;gap:16px;"></div></div>
+      <div class="glass graph-card"><h3>Actions by urgency</h3><div id="graph-actions"></div></div>
+    </div>
+
+    <p class="section-title">Week-over-week trends</p>
+    <div class="graphs" style="margin-top:0">
+      <div class="glass graph-card"><h3>Billable % (history)</h3><div id="trend-billable"></div></div>
+      <div class="glass graph-card"><h3>Projects at risk</h3><div id="trend-risk"></div></div>
+      <div class="glass graph-card"><h3>Open actions</h3><div id="trend-actions"></div></div>
     </div>
 
     <div class="glass" style="padding:20px 24px;margin-bottom:24px;">
@@ -158,10 +74,7 @@
 
     <p class="section-title">Program Status</p>
     <div class="glass" style="overflow:hidden;margin-bottom:24px;">
-      <table>
-        <thead><tr><th>Program</th><th>Owner</th><th>RAG</th><th>Next milestone</th><th>Update</th></tr></thead>
-        <tbody id="program-body"></tbody>
-      </table>
+      <table><thead><tr><th>Program</th><th>Owner</th><th>RAG</th><th>Next milestone</th><th>Update</th></tr></thead><tbody id="program-body"></tbody></table>
     </div>
 
     <p class="section-title" style="color:#fb923c;">Projects at Risk</p>
@@ -169,216 +82,45 @@
 
     <p class="section-title">Action Items</p>
     <div class="glass" style="overflow:hidden;margin-bottom:24px;">
-      <table>
-        <thead><tr><th>ID</th><th>Action</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th></tr></thead>
-        <tbody id="actions-body"></tbody>
-      </table>
+      <table><thead><tr><th>ID</th><th>Action</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th></tr></thead><tbody id="actions-body"></tbody></table>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">
-      <div class="glass" style="padding:20px;">
-        <p class="section-title" style="color:#34d399;">Wins This Week</p>
-        <ul id="wins" style="margin:0;padding:0;list-style:none;"></ul>
-      </div>
-      <div class="glass" style="padding:20px;">
-        <p class="section-title" style="color:#38bdf8;">Focus for Next Week</p>
-        <ol id="focus" style="margin:0;padding-left:1.2rem;color:#cbd5e1;font-size:0.875rem;"></ol>
-      </div>
+      <div class="glass" style="padding:20px;"><p class="section-title" style="color:#34d399;">Wins This Week</p><ul id="wins" style="margin:0;padding:0;list-style:none;"></ul></div>
+      <div class="glass" style="padding:20px;"><p class="section-title" style="color:#38bdf8;">Focus for Next Week</p><ol id="focus" style="margin:0;padding-left:1.2rem;color:#cbd5e1;font-size:0.875rem;"></ol></div>
     </div>
-
-    <p style="text-align:center;color:#64748b;font-size:0.8rem;padding:12px 0;">Weekly Ops Status Pack · Business Operations</p>
+    <p style="text-align:center;color:#64748b;font-size:0.8rem;padding:12px 0;">Weekly Ops Status Pack · Trends · Teams notify ready</p>
   </div>
-
 <script>
-const sample = {
-  week_ending: "2026-07-25",
-  report_date: "2026-07-25",
-  period: "Week of 2026-07-21 to 2026-07-25",
-  program: "Business Operations — Delivery & Enablement",
-  overall_business_health: "Watch",
-  overall_rag: "At Risk",
-  executive_summary: "Business health is Watch; overall delivery RAG is At Risk. Client portfolio carries two at-risk projects (North Region UAT slip; Platform Modernization scope CR). Billability is 79% vs 85% target — three people on bench. AI Enablement and Finance Close remain On Track. Priority: clear the two client risks with dated actions, and move bench capacity onto confirmed South Region billable seats.",
-  headcount: { total: 28, billable: 22, non_billable: 6, billable_pct: 79, target_billable_pct: 85, bench: 3, notes: "Below target; 2 on internal enablement, 1 leave coverage, 3 bench pending client start." },
-  metrics: { active_projects: 6, projects_on_track: 4, projects_at_risk: 2, projects_blocked: 0, programs_at_risk: 1, open_actions: 6, high_priority_actions: 3, overdue_actions: 0, actions_due_7_days: 5, milestones_next_14_days: 3 },
-  programs: [
-    { name: "Client Delivery Portfolio", owner: "P. Sharma", rag: "At Risk", next_milestone: "Q3 checkpoint — 2026-08-15", summary_line: "Revenue on plan; risk in North Region and Platform Modernization." },
-    { name: "AI & Automation Enablement", owner: "R. Prakasam", rag: "On Track", next_milestone: "Pilot value readout — 2026-08-08", summary_line: "Pilots active; three teams trained." },
-    { name: "Finance Ops Close Support", owner: "L. Nguyen", rag: "On Track", next_milestone: "July close sign-off — 2026-08-05", summary_line: "Close checklist on schedule." }
-  ],
-  projects_at_risk: [
-    { name: "North Region Account — Q3 Delivery", owner: "A. Chen", rag: "At Risk", target_end: "2026-09-30", summary_line: "M3 slipped 8 days; client UAT environment unstable.", billable: true },
-    { name: "Platform Modernization (Fixed Price)", owner: "M. Patel", rag: "At Risk", target_end: "2026-08-29", summary_line: "Reporting scope creep; change request not yet approved.", billable: true }
-  ],
-  action_items: [
-    { id: "AI-01", action: "Confirm UAT fix plan with North Region client", owner: "A. Chen", due: "2026-07-29", status: "Open", priority: "High" },
-    { id: "AI-02", action: "Submit CR for Platform Modernization reporting scope", owner: "M. Patel", due: "2026-07-30", status: "Open", priority: "High" },
-    { id: "AI-03", action: "Finance SME workshop on invoice coding (90 min)", owner: "L. Nguyen", due: "2026-07-31", status: "Scheduled", priority: "Medium" },
-    { id: "AI-04", action: "Reassign 2 bench resources to South Region (billable)", owner: "P. Sharma", due: "2026-08-01", status: "Open", priority: "High" },
-    { id: "AI-05", action: "Publish pilot value readout agenda", owner: "R. Prakasam", due: "2026-08-05", status: "Open", priority: "Medium" },
-    { id: "AI-06", action: "Close vendor invoice reconciliation for July close", owner: "L. Nguyen", due: "2026-08-04", status: "Open", priority: "Medium" }
-  ],
-  wins: [
-    "AI enablement: 3 teams trained on status automation",
-    "South Region: 9 of 12 onboarding seats confirmed billable",
-    "Finance ops: accruals review completed on schedule",
-    "Status pack pilot adopted by delivery leads for Friday review"
-  ],
-  focus_next_week: [
-    "Clear North Region UAT and Platform CR (due 29–30 Jul)",
-    "Move bench onto South Region billable seats (due 1 Aug)",
-    "Protect July close — finish vendor reconciliation",
-    "Hold non-critical internal work if delivery needs capacity"
-  ]
-};
-
-function ragClass(r) {
-  r = (r || "").toLowerCase();
-  if (r.indexOf("block") >= 0) return "rag-blocked";
-  if (r.indexOf("risk") >= 0) return "rag-at-risk";
-  return "rag-on-track";
-}
-function healthClass(h) {
-  h = (h || "").toLowerCase();
-  if (h === "good" || h === "healthy") return "health-good";
-  if (h === "poor" || h === "critical") return "health-poor";
-  return "health-watch";
-}
-function tile(val, lab, sub, color) {
-  return '<div class="kpi-tile"><div class="val" style="color:' + (color || "#f8fafc") + '">' + val + '</div><div class="lab">' + lab + '</div>' +
-    (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
-}
-function derive(data) {
-  var m = Object.assign({}, data.metrics || {});
-  var hc = data.headcount || {};
-  var actions = data.action_items || [];
-  var programs = data.programs || [];
-  var atRisk = data.projects_at_risk || [];
-  var rd = data.report_date || data.week_ending || "2026-07-25";
-  if (m.open_actions == null) m.open_actions = actions.filter(function (a) {
-    return (a.status || "").toLowerCase() !== "done" && (a.status || "").toLowerCase() !== "closed";
-  }).length;
-  if (m.high_priority_actions == null) m.high_priority_actions = actions.filter(function (a) {
-    return (a.priority || "").toLowerCase() === "high";
-  }).length;
-  if (m.overdue_actions == null) m.overdue_actions = actions.filter(function (a) {
-    return a.due && a.due < rd && (a.status || "").toLowerCase() !== "done";
-  }).length;
-  if (m.actions_due_7_days == null) m.actions_due_7_days = actions.filter(function (a) {
-    return a.due && a.due >= rd;
-  }).length;
-  if (m.projects_at_risk == null) m.projects_at_risk = atRisk.length;
-  if (m.projects_on_track == null && m.active_projects != null)
-    m.projects_on_track = Math.max(0, m.active_projects - (m.projects_at_risk || 0) - (m.projects_blocked || 0));
-  if (m.programs_at_risk == null) m.programs_at_risk = programs.filter(function (p) {
-    return (p.rag || "").toLowerCase().indexOf("risk") >= 0 || (p.rag || "").toLowerCase().indexOf("block") >= 0;
-  }).length;
-  return { m: m, hc: hc };
-}
-
-function renderKpis(data) {
-  var d = derive(data), m = d.m, hc = d.hc;
-  var below = hc.billable_pct != null && hc.target_billable_pct != null && hc.billable_pct < hc.target_billable_pct;
-  var html = "";
-  html += tile(hc.billable_pct != null ? hc.billable_pct + "%" : "—", "Billable %", "Target " + (hc.target_billable_pct != null ? hc.target_billable_pct + "%" : "—"), below ? "#fb923c" : "#34d399");
-  html += tile(hc.bench != null ? hc.bench : "—", "Bench", "Awaiting client start", "#fbbf24");
-  html += tile(m.projects_at_risk != null ? m.projects_at_risk : "—", "Projects at risk", m.active_projects != null ? m.active_projects + " active total" : "", "#fb923c");
-  html += tile(m.programs_at_risk != null ? m.programs_at_risk : "—", "Programs at risk", "Leadership focus", m.programs_at_risk ? "#fb923c" : "#34d399");
-  html += tile(m.open_actions != null ? m.open_actions : "—", "Open actions", m.high_priority_actions != null ? m.high_priority_actions + " high priority" : "", "#f8fafc");
-  html += tile(m.overdue_actions != null ? m.overdue_actions : "—", "Overdue actions", m.overdue_actions ? "Escalate" : "None past due", m.overdue_actions ? "#f87171" : "#34d399");
-  html += tile(m.actions_due_7_days != null ? m.actions_due_7_days : "—", "Actions due ≤7 days", "Including this week", "#fde68a");
-  html += tile(m.milestones_next_14_days != null ? m.milestones_next_14_days : "—", "Milestones ≤14 days", "Program checkpoints", "#7dd3fc");
-  document.getElementById("kpi-grid").innerHTML = html;
-}
-
-function renderGraphs(data) {
-  var d = derive(data), m = d.m, hc = d.hc;
-  var actual = hc.billable_pct != null ? hc.billable_pct : 0;
-  var target = hc.target_billable_pct != null ? hc.target_billable_pct : 100;
-  var gap = Math.max(0, target - actual);
-  var ac = actual < target ? "#ea580c" : "#16a34a";
-  document.getElementById("graph-billable").innerHTML =
-    '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px"><span style="color:#cbd5e1">Actual</span><span style="font-weight:600;color:' + ac + '">' + actual + '%</span></div>' +
-    '<div class="bar-track"><div class="bar-fill" style="width:' + Math.min(actual, 100) + '%;background:' + ac + '"></div></div></div>' +
-    '<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px"><span style="color:#cbd5e1">Target</span><span style="color:#94a3b8">' + target + '%</span></div>' +
-    '<div class="bar-track"><div class="bar-fill" style="width:' + Math.min(target, 100) + '%;background:#38bdf8"></div></div></div>' +
-    '<p style="font-size:0.75rem;color:#64748b;margin:8px 0 0">Gap: <span style="color:' + (gap > 0 ? "#fb923c" : "#34d399") + '">' + gap + ' pts</span>' +
-    (hc.billable != null ? ' · ' + hc.billable + ' / ' + (hc.total || '—') + ' HC' : '') + '</p>';
-
-  var onTrack = m.projects_on_track || 0, atRisk = m.projects_at_risk || 0, blocked = m.projects_blocked || 0;
-  var totalP = onTrack + atRisk + blocked || 1;
-  var r = 38, circ = 2 * Math.PI * r;
-  var lenOT = (onTrack / totalP) * circ, lenAR = (atRisk / totalP) * circ, lenBL = (blocked / totalP) * circ, off = 0, slices = "";
-  if (onTrack > 0) { slices += '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="' + lenOT + ' ' + (circ - lenOT) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 48 48)" />'; off += lenOT; }
-  if (atRisk > 0) { slices += '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="#ea580c" stroke-width="12" stroke-dasharray="' + lenAR + ' ' + (circ - lenAR) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 48 48)" />'; off += lenAR; }
-  if (blocked > 0) { slices += '<circle cx="48" cy="48" r="' + r + '" fill="none" stroke="#dc2626" stroke-width="12" stroke-dasharray="' + lenBL + ' ' + (circ - lenBL) + '" stroke-dashoffset="' + (-off) + '" transform="rotate(-90 48 48)" />'; }
-  document.getElementById("graph-projects").innerHTML =
-    '<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="' + r + '" fill="none" stroke="#1e293b" stroke-width="12" />' + slices +
-    '<text x="48" y="52" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="700">' + totalP + '</text></svg>' +
-    '<div style="font-size:0.85rem;flex:1;min-width:120px">' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:#16a34a"></span>On track</span><span>' + onTrack + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:#ea580c"></span>At risk</span><span>' + atRisk + '</span></div>' +
-    '<div style="display:flex;justify-content:space-between"><span style="display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:2px;background:#dc2626"></span>Blocked</span><span>' + blocked + '</span></div></div>';
-
-  var openA = m.open_actions || 0, highA = m.high_priority_actions || 0, due7 = m.actions_due_7_days || 0, overdue = m.overdue_actions || 0;
-  var maxA = Math.max(openA, highA, due7, overdue, 1);
-  function ab(l, v, c) {
-    var p = Math.round((v / maxA) * 100);
-    return '<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px"><span style="color:#94a3b8">' + l + '</span><span style="color:#e2e8f0">' + v + '</span></div>' +
-      '<div class="bar-track"><div class="bar-fill" style="width:' + p + '%;background:' + c + '"></div></div></div>';
-  }
-  document.getElementById("graph-actions").innerHTML =
-    ab("Open", openA, "#94a3b8") + ab("High priority", highA, "#ea580c") +
-    ab("Due ≤7 days", due7, "#facc15") + ab("Overdue", overdue, overdue ? "#dc2626" : "#16a34a");
-}
-
-function render(data) {
-  document.getElementById("program").textContent = data.program || "Business Operations";
-  document.getElementById("period").textContent = data.period || ("Week ending " + (data.week_ending || ""));
-  document.getElementById("report-date").textContent = data.report_date || data.week_ending || "";
-  var health = document.getElementById("health-badge");
-  health.textContent = data.overall_business_health || "—";
-  health.className = "badge " + healthClass(data.overall_business_health);
-  var badge = document.getElementById("overall-rag");
-  badge.textContent = data.overall_rag || "";
-  badge.className = "badge " + ragClass(data.overall_rag);
-  renderKpis(data);
-  renderGraphs(data);
-  document.getElementById("headcount-notes").textContent = (data.headcount && data.headcount.notes) || "";
-  document.getElementById("summary").textContent = data.executive_summary || "";
-
-  document.getElementById("program-body").innerHTML = (data.programs || []).map(function (p) {
-    return "<tr><td style=\"color:#fff;font-weight:500\">" + p.name + "</td><td style=\"color:#94a3b8\">" + (p.owner || "") +
-      "</td><td><span class=\"badge " + ragClass(p.rag) + "\" style=\"font-size:0.7rem;padding:2px 8px\">" + p.rag +
-      "</span></td><td style=\"color:#94a3b8;white-space:nowrap\">" + (p.next_milestone || "") +
-      "</td><td style=\"color:#cbd5e1\">" + (p.summary_line || "") + "</td></tr>";
-  }).join("");
-
-  var riskList = document.getElementById("at-risk-list");
-  riskList.innerHTML = (data.projects_at_risk || []).map(function (p) {
-    return '<div class="glass" style="padding:16px;border-left:4px solid #ea580c">' +
-      '<div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px">' +
-      '<strong style="color:#fff;font-size:0.9rem">' + p.name + '</strong>' +
-      '<span class="badge ' + ragClass(p.rag) + '" style="font-size:0.7rem;padding:2px 8px;flex-shrink:0">' + p.rag + '</span></div>' +
-      '<div style="font-size:0.75rem;color:#94a3b8;margin-bottom:6px">Owner: ' + (p.owner || "") + ' · Target end: ' + (p.target_end || "") +
-      ' · ' + (p.billable ? "Billable" : "Non-billable") + '</div>' +
-      '<p style="margin:0;font-size:0.85rem;color:#cbd5e1">' + (p.summary_line || "") + '</p></div>';
-  }).join("") || '<p style="color:#64748b">None</p>';
-
-  document.getElementById("actions-body").innerHTML = (data.action_items || []).map(function (a) {
-    var pri = (a.priority || "").toLowerCase() === "high" ? "pri-high" : "pri-medium";
-    return "<tr><td style=\"color:#64748b\">" + (a.id || "") + "</td><td style=\"color:#e2e8f0\">" + (a.action || "") +
-      "</td><td style=\"color:#94a3b8\">" + (a.owner || "") + "</td><td style=\"color:#cbd5e1;white-space:nowrap\">" + (a.due || "") +
-      "</td><td class=\"" + pri + "\">" + (a.priority || "") + "</td><td style=\"color:#94a3b8\">" + (a.status || "") + "</td></tr>";
-  }).join("");
-
-  document.getElementById("wins").innerHTML = (data.wins || []).map(function (x) {
-    return '<li style="display:flex;gap:8px;margin-bottom:8px;font-size:0.875rem;color:#cbd5e1"><span style="color:#34d399">✓</span><span>' + x + '</span></li>';
-  }).join("");
-  document.getElementById("focus").innerHTML = (data.focus_next_week || []).map(function (x) {
-    return "<li style=\"margin-bottom:8px\">" + x + "</li>";
-  }).join("");
-}
-render(sample);
+const sample = {"week_ending":"2026-07-25","report_date":"2026-07-25","period":"Week of 2026-07-21 to 2026-07-25","program":"Business Operations — Delivery & Enablement","overall_business_health":"Watch","overall_rag":"At Risk","executive_summary":"Business health is Watch; delivery RAG is At Risk. Two client projects at risk. Billability 79% vs 85% target. Priority: clear dated actions and move bench onto billable seats.","headcount":{"total":28,"billable":22,"non_billable":6,"billable_pct":79,"target_billable_pct":85,"bench":3,"notes":"Below target; 2 enablement, 1 leave, 3 bench."},"metrics":{"active_projects":6,"projects_on_track":4,"projects_at_risk":2,"projects_blocked":0,"programs_at_risk":1,"open_actions":6,"high_priority_actions":3,"overdue_actions":0,"actions_due_7_days":5,"milestones_next_14_days":3},"programs":[{"name":"Client Delivery Portfolio","owner":"P. Sharma","rag":"At Risk","next_milestone":"Q3 checkpoint — 2026-08-15","summary_line":"Risk in North Region and Platform Modernization."},{"name":"AI & Automation Enablement","owner":"R. Prakasam","rag":"On Track","next_milestone":"Pilot value readout — 2026-08-08","summary_line":"Pilots active; three teams trained."},{"name":"Finance Ops Close Support","owner":"L. Nguyen","rag":"On Track","next_milestone":"July close — 2026-08-05","summary_line":"Close checklist on schedule."}],"projects_at_risk":[{"name":"North Region Account — Q3","owner":"A. Chen","rag":"At Risk","target_end":"2026-09-30","summary_line":"M3 slipped; UAT unstable.","billable":true},{"name":"Platform Modernization","owner":"M. Patel","rag":"At Risk","target_end":"2026-08-29","summary_line":"Scope CR not approved.","billable":true}],"action_items":[{"id":"AI-01","action":"Confirm UAT fix plan","owner":"A. Chen","due":"2026-07-29","status":"Open","priority":"High"},{"id":"AI-02","action":"Submit Platform CR","owner":"M. Patel","due":"2026-07-30","status":"Open","priority":"High"},{"id":"AI-03","action":"Finance coding workshop","owner":"L. Nguyen","due":"2026-07-31","status":"Scheduled","priority":"Medium"},{"id":"AI-04","action":"Move 2 bench to South Region","owner":"P. Sharma","due":"2026-08-01","status":"Open","priority":"High"},{"id":"AI-05","action":"Pilot readout agenda","owner":"R. Prakasam","due":"2026-08-05","status":"Open","priority":"Medium"},{"id":"AI-06","action":"Vendor invoice reconciliation","owner":"L. Nguyen","due":"2026-08-04","status":"Open","priority":"Medium"}],"wins":["3 teams trained on status automation","9 of 12 South Region seats billable","Accruals review on schedule","Status pack used in Friday review"],"focus_next_week":["Clear UAT and Platform CR (29–30 Jul)","Bench → billable seats (1 Aug)","Protect July close","Hold non-critical internal work"]};
+const sampleHistory = {"weeks":[{"week_ending":"2026-06-06","billable_pct":86,"projects_at_risk":1,"open_actions":4},{"week_ending":"2026-06-13","billable_pct":84,"projects_at_risk":1,"open_actions":5},{"week_ending":"2026-06-20","billable_pct":82,"projects_at_risk":2,"open_actions":6},{"week_ending":"2026-06-27","billable_pct":81,"projects_at_risk":2,"open_actions":7},{"week_ending":"2026-07-04","billable_pct":80,"projects_at_risk":2,"open_actions":6},{"week_ending":"2026-07-11","billable_pct":80,"projects_at_risk":3,"open_actions":8},{"week_ending":"2026-07-18","billable_pct":78,"projects_at_risk":2,"open_actions":7},{"week_ending":"2026-07-25","billable_pct":79,"projects_at_risk":2,"open_actions":6}]};
+function ragClass(r){r=(r||"").toLowerCase();if(r.indexOf("block")>=0)return"rag-blocked";if(r.indexOf("risk")>=0)return"rag-at-risk";return"rag-on-track";}
+function healthClass(h){h=(h||"").toLowerCase();if(h==="good"||h==="healthy")return"health-good";if(h==="poor"||h==="critical")return"health-poor";return"health-watch";}
+function tile(v,l,s,c){return'<div class="kpi-tile"><div class="val" style="color:'+(c||"#f8fafc")+'">'+v+'</div><div class="lab">'+l+'</div>'+(s?'<div class="sub">'+s+'</div>':'')+'</div>';}
+function derive(data){var m=Object.assign({},data.metrics||{}),hc=data.headcount||{},actions=data.action_items||[],programs=data.programs||[],atRisk=data.projects_at_risk||[],rd=data.report_date||data.week_ending||"2026-07-25";
+if(m.open_actions==null)m.open_actions=actions.filter(function(a){return(a.status||"").toLowerCase()!="done"&&(a.status||"").toLowerCase()!="closed";}).length;
+if(m.high_priority_actions==null)m.high_priority_actions=actions.filter(function(a){return(a.priority||"").toLowerCase()==="high";}).length;
+if(m.overdue_actions==null)m.overdue_actions=actions.filter(function(a){return a.due&&a.due<rd&&(a.status||"").toLowerCase()!="done";}).length;
+if(m.actions_due_7_days==null)m.actions_due_7_days=actions.filter(function(a){return a.due&&a.due>=rd;}).length;
+if(m.projects_at_risk==null)m.projects_at_risk=atRisk.length;
+if(m.projects_on_track==null&&m.active_projects!=null)m.projects_on_track=Math.max(0,m.active_projects-(m.projects_at_risk||0)-(m.projects_blocked||0));
+if(m.programs_at_risk==null)m.programs_at_risk=programs.filter(function(p){return(p.rag||"").toLowerCase().indexOf("risk")>=0||(p.rag||"").toLowerCase().indexOf("block")>=0;}).length;
+return{m:m,hc:hc};}
+function renderKpis(data){var d=derive(data),m=d.m,hc=d.hc,below=hc.billable_pct!=null&&hc.target_billable_pct!=null&&hc.billable_pct<hc.target_billable_pct;
+var html="";html+=tile(hc.billable_pct!=null?hc.billable_pct+"%":"—","Billable %","Target "+(hc.target_billable_pct!=null?hc.target_billable_pct+"%":"—"),below?"#fb923c":"#34d399");html+=tile(hc.bench!=null?hc.bench:"—","Bench","Awaiting client start","#fbbf24");html+=tile(m.projects_at_risk!=null?m.projects_at_risk:"—","Projects at risk",m.active_projects!=null?m.active_projects+" active":"","#fb923c");html+=tile(m.programs_at_risk!=null?m.programs_at_risk:"—","Programs at risk","Leadership focus",m.programs_at_risk?"#fb923c":"#34d399");html+=tile(m.open_actions!=null?m.open_actions:"—","Open actions",m.high_priority_actions!=null?m.high_priority_actions+" high":"","#f8fafc");html+=tile(m.overdue_actions!=null?m.overdue_actions:"—","Overdue actions",m.overdue_actions?"Escalate":"None past due",m.overdue_actions?"#f87171":"#34d399");html+=tile(m.actions_due_7_days!=null?m.actions_due_7_days:"—","Actions due ≤7 days","This week","#fde68a");html+=tile(m.milestones_next_14_days!=null?m.milestones_next_14_days:"—","Milestones ≤14 days","Checkpoints","#7dd3fc");document.getElementById("kpi-grid").innerHTML=html;}
+function renderGraphs(data){var d=derive(data),m=d.m,hc=d.hc;var actual=hc.billable_pct||0,target=hc.target_billable_pct||100,gap=Math.max(0,target-actual),ac=actual<target?"#ea580c":"#16a34a";
+document.getElementById("graph-billable").innerHTML='<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px"><span style="color:#cbd5e1">Actual</span><span style="font-weight:600;color:'+ac+'">'+actual+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(actual,100)+'%;background:'+ac+'"></div></div></div><div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:6px"><span style="color:#cbd5e1">Target</span><span style="color:#94a3b8">'+target+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(target,100)+'%;background:#38bdf8"></div></div></div><p style="font-size:0.75rem;color:#64748b;margin:8px 0 0">Gap: <span style="color:'+(gap>0?"#fb923c":"#34d399")+'">'+gap+' pts</span></p>';
+var onTrack=m.projects_on_track||0,atRisk=m.projects_at_risk||0,blocked=m.projects_blocked||0,totalP=onTrack+atRisk+blocked||1,r=38,circ=2*Math.PI*r,lenOT=(onTrack/totalP)*circ,lenAR=(atRisk/totalP)*circ,lenBL=(blocked/totalP)*circ,off=0,slices="";
+if(onTrack>0){slices+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="'+lenOT+' '+(circ-lenOT)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 48 48)" />';off+=lenOT;}if(atRisk>0){slices+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#ea580c" stroke-width="12" stroke-dasharray="'+lenAR+' '+(circ-lenAR)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 48 48)" />';off+=lenAR;}if(blocked>0){slices+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#dc2626" stroke-width="12" stroke-dasharray="'+lenBL+' '+(circ-lenBL)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 48 48)" />';}
+document.getElementById("graph-projects").innerHTML='<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#1e293b" stroke-width="12" />'+slices+'<text x="48" y="52" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="700">'+totalP+'</text></svg><div style="font-size:0.85rem;flex:1;min-width:120px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>On track</span><span>'+onTrack+'</span></div><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span>At risk</span><span>'+atRisk+'</span></div><div style="display:flex;justify-content:space-between"><span>Blocked</span><span>'+blocked+'</span></div></div>';
+var openA=m.open_actions||0,highA=m.high_priority_actions||0,due7=m.actions_due_7_days||0,overdue=m.overdue_actions||0,maxA=Math.max(openA,highA,due7,overdue,1);
+function ab(l,v,c){var p=Math.round((v/maxA)*100);return'<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px"><span style="color:#94a3b8">'+l+'</span><span>'+v+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+p+'%;background:'+c+'"></div></div></div>';}
+document.getElementById("graph-actions").innerHTML=ab("Open",openA,"#94a3b8")+ab("High priority",highA,"#ea580c")+ab("Due ≤7 days",due7,"#facc15")+ab("Overdue",overdue,overdue?"#dc2626":"#16a34a");}
+function renderTrends(history){var weeks=(history&&history.weeks)||[];if(!weeks.length){document.getElementById("trend-billable").innerHTML="<p style='color:#64748b;font-size:0.85rem'>No history yet</p>";return;}function spark(values,color,suffix){suffix=suffix||"";var max=Math.max.apply(null,values.concat([1])),min=Math.min.apply(null,values),span=Math.max(max-min,1),w=280,h=72,pad=4;var last=values[values.length-1];var bars=values.map(function(v,i){var bw=(w-pad*2)/values.length-2;var x=pad+i*((w-pad*2)/values.length);var bh=((v-min)/span)*(h-pad*2);var y=h-pad-bh;return'<rect x="'+x+'" y="'+y+'" width="'+Math.max(bw,2)+'" height="'+Math.max(bh,1)+'" fill="'+color+'" opacity="0.85" rx="2"/>';}).join("");var labels=weeks.map(function(wk){return(wk.week_ending||"").slice(5);});return'<div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px"><span style="font-size:1.25rem;font-weight:700;color:'+color+'">'+last+suffix+'</span><span style="font-size:0.7rem;color:#64748b">'+labels[0]+' → '+labels[labels.length-1]+'</span></div><svg width="100%" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>';}var bill=weeks.map(function(w){return w.billable_pct!=null?w.billable_pct:0;});var risk=weeks.map(function(w){return w.projects_at_risk!=null?w.projects_at_risk:0;});var acts=weeks.map(function(w){return w.open_actions!=null?w.open_actions:0;});document.getElementById("trend-billable").innerHTML=spark(bill,"#38bdf8","%");document.getElementById("trend-risk").innerHTML=spark(risk,"#fb923c","");document.getElementById("trend-actions").innerHTML=spark(acts,"#94a3b8","");}
+function render(data){document.getElementById("program").textContent=data.program||"Business Operations";document.getElementById("period").textContent=data.period||("Week ending "+(data.week_ending||""));document.getElementById("report-date").textContent=data.report_date||data.week_ending||"";var health=document.getElementById("health-badge");health.textContent=data.overall_business_health||"—";health.className="badge "+healthClass(data.overall_business_health);var badge=document.getElementById("overall-rag");badge.textContent=data.overall_rag||"";badge.className="badge "+ragClass(data.overall_rag);renderKpis(data);renderGraphs(data);document.getElementById("headcount-notes").textContent=(data.headcount&&data.headcount.notes)||"";document.getElementById("summary").textContent=data.executive_summary||"";document.getElementById("program-body").innerHTML=(data.programs||[]).map(function(p){return"<tr><td style=\"color:#fff;font-weight:500\">"+p.name+"</td><td style=\"color:#94a3b8\">"+(p.owner||"")+"</td><td><span class=\"badge "+ragClass(p.rag)+"\" style=\"font-size:0.7rem;padding:2px 8px\">"+p.rag+"</span></td><td style=\"color:#94a3b8\">"+(p.next_milestone||"")+"</td><td style=\"color:#cbd5e1\">"+(p.summary_line||"")+"</td></tr>";}).join("");document.getElementById("at-risk-list").innerHTML=(data.projects_at_risk||[]).map(function(p){return'<div class="glass" style="padding:16px;border-left:4px solid #ea580c"><div style="display:flex;justify-content:space-between;gap:8px;margin-bottom:6px"><strong style="color:#fff;font-size:0.9rem">'+p.name+'</strong><span class="badge '+ragClass(p.rag)+'" style="font-size:0.7rem;padding:2px 8px">'+p.rag+'</span></div><div style="font-size:0.75rem;color:#94a3b8;margin-bottom:6px">Owner: '+(p.owner||"")+' · End: '+(p.target_end||"")+' · '+(p.billable?"Billable":"Non-billable")+'</div><p style="margin:0;font-size:0.85rem;color:#cbd5e1">'+(p.summary_line||"")+'</p></div>';}).join("")||"<p style='color:#64748b'>None</p>";document.getElementById("actions-body").innerHTML=(data.action_items||[]).map(function(a){var pri=(a.priority||"").toLowerCase()==="high"?"pri-high":"pri-medium";return"<tr><td style=\"color:#64748b\">"+(a.id||"")+"</td><td style=\"color:#e2e8f0\">"+(a.action||"")+"</td><td style=\"color:#94a3b8\">"+(a.owner||"")+"</td><td style=\"color:#cbd5e1\">"+(a.due||"")+"</td><td class=\""+pri+"\">"+(a.priority||"")+"</td><td style=\"color:#94a3b8\">"+(a.status||"")+"</td></tr>";}).join("");document.getElementById("wins").innerHTML=(data.wins||[]).map(function(x){return'<li style="display:flex;gap:8px;margin-bottom:8px;font-size:0.875rem;color:#cbd5e1"><span style="color:#34d399">✓</span><span>'+x+'</span></li>';}).join("");document.getElementById("focus").innerHTML=(data.focus_next_week||[]).map(function(x){return"<li style=\"margin-bottom:8px\">"+x+"</li>";}).join("");}
+render(sample);renderTrends(sampleHistory);
+fetch("history.json?v=4").then(function(r){return r.ok?r.json():null}).then(function(h){if(h&&h.weeks)renderTrends(h)}).catch(function(){});
+fetch("status_pack.json?v=4").then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&(d.programs||d.action_items))render(d)}).catch(function(){});
 </script>
 </body>
 </html>

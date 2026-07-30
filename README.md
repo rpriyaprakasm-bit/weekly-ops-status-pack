@@ -1,15 +1,28 @@
 # Weekly Ops Status Pack
 
-**AI-assisted weekly status for Business Operations — Excel, SharePoint, or Jira in; leadership pack out. Trigger from GitHub schedule or Power Automate on Friday.**
+**AI-assisted weekly status for Business Operations — Excel / SharePoint / Jira in; leadership pack out. Friday via Power Automate or GitHub.**
 
 [![Dashboard](https://img.shields.io/badge/Live-Demo-38bdf8)](https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status-v2.html)
-[![Grok](https://img.shields.io/badge/Powered%20by-Grok-000000?logo=x&logoColor=white)](https://x.ai)
 
 ---
 
 ## Live demo
 
-**→ [Open status pack](https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status-v2.html)**
+**→ [Open dashboard](https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status-v2.html)**
+
+8 KPIs · billability / RAG / actions graphs · **week-over-week trends** · programs · at-risk projects · dated actions.
+
+---
+
+## What’s included (upgrades)
+
+| Upgrade | How |
+|---------|-----|
+| **Teams notify** | Secret `TEAMS_WEBHOOK_URL` → MessageCard after each successful run |
+| **Weekly history / trends** | `data/history.json` + trend charts on the dashboard |
+| **SharePoint list template** | [SHAREPOINT_LIST_TEMPLATE.md](./SHAREPOINT_LIST_TEMPLATE.md) — columns 1:1 with `data/csv/` |
+
+Also: [INPUTS.md](./INPUTS.md) · [POWER_AUTOMATE.md](./POWER_AUTOMATE.md)
 
 ---
 
@@ -17,67 +30,19 @@
 
 | Trigger | When |
 |--------|------|
-| **Power Automate** (recommended for BO) | Friday recurrence → HTTP `repository_dispatch` |
-| **GitHub schedule** | Cron Friday 14:00 UTC |
-| **Manual** | Actions tab → Run workflow |
-
-**Power Automate setup:** [POWER_AUTOMATE.md](./POWER_AUTOMATE.md)
-
-```text
-Friday (Power Automate)
-  → optional SharePoint/Excel refresh
-  → POST repository_dispatch (event: weekly-ops-status)
-  → GitHub Action: collect → Grok → dashboard
-  → optional Teams notification
-```
+| Power Automate | Friday → `repository_dispatch` |
+| GitHub schedule | Friday 14:00 UTC |
+| Manual | Actions → Run workflow |
 
 ---
 
-## Inputs
+## Secrets
 
-| Source | How |
-|--------|-----|
-| **Excel / CSV** | `data/csv/*` or `data/ops_status_input.xlsx` |
-| **SharePoint** | List/library → export or sync into `data/` |
-| **Jira** | API secrets + `data/jira_config.json` |
-
-Full guide: [INPUTS.md](./INPUTS.md)
-
----
-
-## Quick start
-
-1. Put weekly numbers in `data/csv/` (or Excel).
-2. Add secrets as needed: `XAI_API_KEY`, optional `JIRA_*`.
-3. Either:
-   - Build the **Friday Power Automate** flow ([guide](./POWER_AUTOMATE.md)), or
-   - **Actions → Weekly Ops Status Pack → Run workflow**
-
----
-
-## Role fit
-
-**Business Operations** — Friday pack without manual copy-paste.  
-**AI / automation enablement** — Power Automate + GitHub Actions + LLM, governed and repeatable.
-
----
-
-## Repo layout
-
-```text
-POWER_AUTOMATE.md      Friday flow + HTTP dispatch
-INPUTS.md              Excel / SharePoint / Jira
-data/csv/              Editable input tables
-src/collectors/        Excel + Jira collectors
-.github/workflows/     schedule + workflow_dispatch + repository_dispatch
-docs/status-v2.html    Dashboard
-```
-
----
-
-## Related
-
-- [AI Project Risk Radar](https://github.com/rpriyaprakasm-bit/ai-project-risk-radar)
+| Secret | Purpose |
+|--------|--------|
+| `XAI_API_KEY` | Grok narrative (optional for demo) |
+| `TEAMS_WEBHOOK_URL` | Incoming webhook for Teams card |
+| `JIRA_BASE_URL` / `JIRA_EMAIL` / `JIRA_API_TOKEN` | Optional Jira collect |
 
 ---
 
