@@ -19,12 +19,15 @@
     .health-poor { background: #dc2626; }
     .pri-high { color: #fb923c; }
     .pri-medium { color: #facc15; }
+    .tile-value { font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+    .tile-label { font-size: 0.7rem; color: #94a3b8; margin-top: 0.35rem; }
+    .tile-sub { font-size: 0.65rem; color: #64748b; margin-top: 0.15rem; }
   </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
-  <div class="max-w-5xl mx-auto">
+  <div class="max-w-6xl mx-auto">
 
-    <header class="mb-8">
+    <header class="mb-6">
       <p class="text-xs uppercase tracking-wider text-slate-500 mb-1">Weekly Business Operations Status Pack</p>
       <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
         <div>
@@ -47,26 +50,9 @@
       </div>
     </header>
 
-    <!-- KPI row: billability + counts -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-      <div class="glass rounded-xl p-4 text-center">
-        <div class="text-2xl font-bold text-white" id="kpi-billable-pct">—</div>
-        <div class="text-xs text-slate-400 mt-1">Billable %</div>
-        <div class="text-[10px] text-slate-500 mt-0.5">Target <span id="kpi-target">—</span>%</div>
-      </div>
-      <div class="glass rounded-xl p-4 text-center">
-        <div class="text-2xl font-bold text-emerald-400" id="kpi-billable">—</div>
-        <div class="text-xs text-slate-400 mt-1">Billable headcount</div>
-      </div>
-      <div class="glass rounded-xl p-4 text-center">
-        <div class="text-2xl font-bold text-slate-300" id="kpi-nonbillable">—</div>
-        <div class="text-xs text-slate-400 mt-1">Non-billable</div>
-      </div>
-      <div class="glass rounded-xl p-4 text-center">
-        <div class="text-2xl font-bold text-orange-400" id="kpi-at-risk">—</div>
-        <div class="text-xs text-slate-400 mt-1">Projects at risk</div>
-      </div>
-    </div>
+    <!-- Business Operations KPI tiles -->
+    <h2 class="text-sm uppercase tracking-wider text-slate-400 mb-3">Key metrics</h2>
+    <div id="kpi-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-3"></div>
     <p id="headcount-notes" class="text-sm text-slate-400 mb-6"></p>
 
     <section class="glass rounded-2xl p-6 mb-6">
@@ -147,7 +133,28 @@
         non_billable: 6,
         billable_pct: 79,
         target_billable_pct: 85,
+        bench: 3,
+        on_leave_or_coverage: 1,
+        internal_enablement: 2,
         notes: "Below target; 2 on internal enablement, 1 leave coverage, 3 bench pending client start."
+      },
+      metrics: {
+        active_projects: 6,
+        projects_on_track: 4,
+        projects_at_risk: 2,
+        projects_blocked: 0,
+        programs_total: 3,
+        programs_on_track: 2,
+        programs_at_risk: 1,
+        open_actions: 6,
+        high_priority_actions: 3,
+        overdue_actions: 0,
+        actions_due_7_days: 5,
+        milestones_next_14_days: 3,
+        wins_this_week: 4,
+        client_projects: 3,
+        internal_projects: 3,
+        utilization_gap_pct: 6
       },
       programs: [
         { name: "Client Delivery Portfolio", owner: "P. Sharma", rag: "At Risk", next_milestone: "Q3 checkpoint — 2026-08-15", summary_line: "Revenue on plan; risk concentrated in North Region and Platform Modernization." },
@@ -193,6 +200,85 @@
       return "health-watch";
     }
 
+    function tile(value, label, sub, valueClass) {
+      return '<div class="glass rounded-xl p-3 text-center">' +
+        '<div class="tile-value ' + (valueClass || "text-white") + '">' + value + '</div>' +
+        '<div class="tile-label">' + label + '</div>' +
+        (sub ? '<div class="tile-sub">' + sub + '</div>' : '') +
+      '</div>';
+    }
+
+    function deriveMetrics(data) {
+      var m = Object.assign({}, data.metrics || {});
+      var hc = data.headcount || {};
+      var actions = data.action_items || [];
+      var programs = data.programs || [];
+      var atRisk = data.projects_at_risk || [];
+      var reportDate = data.report_date || data.week_ending || "2026-07-25";
+
+      if (m.open_actions == null) m.open_actions = actions.filter(function (a) {
+        return (a.status || "").toLowerCase() !== "done" && (a.status || "").toLowerCase() !== "closed";
+      }).length;
+      if (m.high_priority_actions == null) m.high_priority_actions = actions.filter(function (a) {
+        return (a.priority || "").toLowerCase() === "high";
+      }).length;
+      if (m.overdue_actions == null) {
+        m.overdue_actions = actions.filter(function (a) {
+          return a.due && a.due < reportDate && (a.status || "").toLowerCase() !== "done";
+        }).length;
+      }
+      if (m.actions_due_7_days == null) {
+        m.actions_due_7_days = actions.filter(function (a) {
+          return a.due && a.due >= reportDate;
+        }).length;
+      }
+      if (m.projects_at_risk == null) m.projects_at_risk = atRisk.length;
+      if (m.programs_total == null) m.programs_total = programs.length;
+      if (m.programs_on_track == null) m.programs_on_track = programs.filter(function (p) {
+        return (p.rag || "").toLowerCase().indexOf("track") >= 0;
+      }).length;
+      if (m.programs_at_risk == null) m.programs_at_risk = programs.filter(function (p) {
+        return (p.rag || "").toLowerCase().indexOf("risk") >= 0 || (p.rag || "").toLowerCase().indexOf("block") >= 0;
+      }).length;
+      if (m.wins_this_week == null) m.wins_this_week = (data.wins || []).length;
+      if (m.utilization_gap_pct == null && hc.target_billable_pct != null && hc.billable_pct != null) {
+        m.utilization_gap_pct = Math.max(0, hc.target_billable_pct - hc.billable_pct);
+      }
+      return { m: m, hc: hc };
+    }
+
+    function renderKpis(data) {
+      var d = deriveMetrics(data);
+      var m = d.m, hc = d.hc;
+      var gap = m.utilization_gap_pct != null ? m.utilization_gap_pct : "—";
+      var gapClass = (typeof gap === "number" && gap > 0) ? "text-orange-400" : "text-emerald-400";
+
+      var html = "";
+      html += tile(
+        (hc.billable_pct != null ? hc.billable_pct + "%" : "—"),
+        "Billable %",
+        "Target " + (hc.target_billable_pct != null ? hc.target_billable_pct + "%" : "—"),
+        hc.billable_pct != null && hc.target_billable_pct != null && hc.billable_pct < hc.target_billable_pct ? "text-orange-400" : "text-emerald-400"
+      );
+      html += tile(gap === "—" ? "—" : gap + " pts", "Utilization gap", "Below target", gapClass);
+      html += tile(hc.billable != null ? hc.billable : "—", "Billable HC", "of " + (hc.total != null ? hc.total : "—") + " total", "text-emerald-400");
+      html += tile(hc.non_billable != null ? hc.non_billable : "—", "Non-billable HC", (hc.bench != null ? hc.bench + " on bench" : ""), "text-slate-200");
+      html += tile(hc.bench != null ? hc.bench : "—", "Bench", "Awaiting client start", "text-amber-300");
+      html += tile(m.projects_at_risk != null ? m.projects_at_risk : "—", "Projects at risk", (m.active_projects != null ? m.active_projects + " active total" : ""), "text-orange-400");
+      html += tile(m.projects_on_track != null ? m.projects_on_track : "—", "Projects on track", (m.client_projects != null ? m.client_projects + " client / " + (m.internal_projects || 0) + " internal" : ""), "text-emerald-400");
+      html += tile(m.programs_on_track != null ? m.programs_on_track : "—", "Programs on track", "of " + (m.programs_total != null ? m.programs_total : "—"), "text-sky-300");
+      html += tile(m.programs_at_risk != null ? m.programs_at_risk : "—", "Programs at risk", "Need leadership focus", m.programs_at_risk ? "text-orange-400" : "text-emerald-400");
+      html += tile(m.open_actions != null ? m.open_actions : "—", "Open actions", (m.high_priority_actions != null ? m.high_priority_actions + " high priority" : ""), "text-white");
+      html += tile(m.overdue_actions != null ? m.overdue_actions : "—", "Overdue actions", m.overdue_actions ? "Escalate" : "None past due", m.overdue_actions ? "text-red-400" : "text-emerald-400");
+      html += tile(m.actions_due_7_days != null ? m.actions_due_7_days : "—", "Actions due ≤7 days", "Including this week", "text-amber-200");
+      html += tile(m.milestones_next_14_days != null ? m.milestones_next_14_days : "—", "Milestones ≤14 days", "Program checkpoints", "text-sky-300");
+      html += tile(m.wins_this_week != null ? m.wins_this_week : "—", "Wins this week", "Positive delivery signal", "text-emerald-400");
+      html += tile(m.client_projects != null ? m.client_projects : "—", "Client projects", "Billable delivery", "text-white");
+      html += tile(m.internal_projects != null ? m.internal_projects : "—", "Internal projects", "Enablement / finance / ops", "text-slate-300");
+
+      document.getElementById("kpi-grid").innerHTML = html;
+    }
+
     function render(data) {
       document.getElementById("program").textContent = data.program || "Business Operations";
       document.getElementById("period").textContent = data.period || ("Week ending " + (data.week_ending || ""));
@@ -206,13 +292,8 @@
       badge.textContent = data.overall_rag || "";
       badge.className = "inline-block px-3 py-1 rounded-full text-sm font-semibold text-white " + ragClass(data.overall_rag);
 
-      var hc = data.headcount || {};
-      document.getElementById("kpi-billable-pct").textContent = (hc.billable_pct != null ? hc.billable_pct + "%" : "—");
-      document.getElementById("kpi-target").textContent = hc.target_billable_pct != null ? hc.target_billable_pct : "—";
-      document.getElementById("kpi-billable").textContent = hc.billable != null ? hc.billable : "—";
-      document.getElementById("kpi-nonbillable").textContent = hc.non_billable != null ? hc.non_billable : "—";
-      document.getElementById("kpi-at-risk").textContent = (data.projects_at_risk || []).length;
-      document.getElementById("headcount-notes").textContent = hc.notes || "";
+      renderKpis(data);
+      document.getElementById("headcount-notes").textContent = (data.headcount && data.headcount.notes) || "";
 
       document.getElementById("summary").textContent = data.executive_summary || "";
 
