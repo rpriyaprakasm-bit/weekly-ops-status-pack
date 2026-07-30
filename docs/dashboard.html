@@ -3,117 +3,372 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Ops Status Pack — with trends</title>
+<title>Weekly Ops Status Pack</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#0b0f19;color:#e2e8f0;font-family:system-ui,sans-serif;padding:1.5rem}
-.wrap{max-width:1100px;margin:0 auto}.glass{background:rgba(30,41,59,.92);border:1px solid rgba(148,163,184,.15);border-radius:12px}
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
-.kpi-tile{background:rgba(30,41,59,.95);border:1px solid rgba(148,163,184,.14);border-radius:12px;padding:16px 12px;text-align:center;min-height:90px}
-.kpi-tile .val{font-size:1.7rem;font-weight:700}.kpi-tile .lab{font-size:.72rem;color:#94a3b8;margin-top:6px}.kpi-tile .sub{font-size:.65rem;color:#64748b;margin-top:3px}
-.graphs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:18px 0 22px}@media(max-width:900px){.graphs{grid-template-columns:1fr}}
-.graph-card{padding:18px}.graph-card h3{margin:0 0 12px;font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8}
-.bar-track{background:#1e293b;border-radius:999px;height:11px;overflow:hidden}.bar-fill{height:100%;border-radius:999px}
-.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.8rem;font-weight:600;color:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:#0b0f19;color:#e2e8f0;font-family:system-ui,-apple-system,sans-serif;padding:1.25rem}
+.wrap{max-width:1100px;margin:0 auto}
+.glass{background:rgba(30,41,59,.92);border:1px solid rgba(148,163,184,.15);border-radius:12px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:900px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr;gap:8px}}
+.kpi-tile{background:rgba(30,41,59,.95);border:1px solid rgba(148,163,184,.14);border-radius:12px;padding:14px 10px;text-align:center;min-height:100px;display:flex;flex-direction:column;justify-content:center}
+.kpi-tile .val{font-size:1.6rem;font-weight:700;line-height:1.1}
+.kpi-tile .lab{font-size:.7rem;color:#94a3b8;margin-top:5px;font-weight:500}
+.kpi-tile .sub{font-size:.62rem;color:#64748b;margin-top:2px}
+.kpi-tile .delta{font-size:.65rem;margin-top:4px;font-weight:600}
+.delta-up{color:#f87171}.delta-down{color:#34d399}.delta-flat{color:#64748b}
+.graphs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0 20px}
+@media(max-width:900px){.graphs{grid-template-columns:1fr}}
+.graph-card{padding:16px}.graph-card h3{margin:0 0 12px;font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8}
+.bar-track{background:#1e293b;border-radius:999px;height:10px;overflow:hidden}.bar-fill{height:100%;border-radius:999px}
+.badge{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.75rem;font-weight:600;color:#fff}
 .rag-on-track{background:#16a34a}.rag-at-risk{background:#ea580c}.rag-blocked{background:#dc2626}
 .health-watch{background:#ca8a04}.health-good{background:#16a34a}.health-poor{background:#dc2626}
-.pri-high{color:#fb923c}.pri-medium{color:#facc15}
-table{width:100%;border-collapse:collapse;font-size:.875rem}th{text-align:left;padding:12px 16px;color:#94a3b8;background:rgba(15,23,42,.5)}td{padding:12px 16px;border-top:1px solid rgba(51,65,85,.6)}
-.section-title{font-size:.7rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:0 0 10px;font-weight:600}
-.header-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;margin-bottom:22px}
-.badge-row{display:flex;gap:12px}.badge-block{text-align:center}.badge-block .lbl{font-size:.65rem;text-transform:uppercase;color:#64748b;margin-bottom:4px}
-.trend-callout{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.25);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:.85rem;color:#7dd3fc}
+.pri-high{color:#fb923c}.pri-medium{color:#facc15}.pri-low{color:#94a3b8}
+table{width:100%;border-collapse:collapse;font-size:.82rem}
+th{text-align:left;padding:10px 12px;color:#94a3b8;background:rgba(15,23,42,.55);font-weight:500;white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid rgba(51,65,85,.55);vertical-align:top}
+.table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.section-title{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:0 0 10px;font-weight:600}
+.header-row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;margin-bottom:12px}
+.badge-row{display:flex;gap:10px;flex-wrap:wrap}.badge-block{text-align:center}.badge-block .lbl{font-size:.62rem;text-transform:uppercase;color:#64748b;margin-bottom:4px}
+.meta-line{font-size:.8rem;color:#64748b;margin:0 0 16px}
+.meta-line strong{color:#94a3b8;font-weight:500}
+.dq{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:.82rem;color:#fde68a;display:none}
+.dq strong{color:#fbbf24}
+.dq ul{margin:6px 0 0;padding-left:1.2rem}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;align-items:center}
+.filter-row label{font-size:.72rem;color:#94a3b8}
+.filter-row select,.filter-row input{background:#1e293b;border:1px solid #334155;color:#e2e8f0;border-radius:8px;padding:6px 10px;font-size:.8rem}
+.overdue-card{border-left:4px solid #dc2626;padding:12px 14px;margin-bottom:8px}
+.overdue-card a,.proj-link{color:#38bdf8;text-decoration:none;font-size:.75rem}
+.overdue-card a:hover,.proj-link:hover{text-decoration:underline}
+@media print{
+  body{background:#fff;color:#111;padding:0}
+  .glass,.kpi-tile{background:#fff;border:1px solid #ccc;color:#111}
+  .kpi-tile .lab,.section-title,.meta-line,.badge-block .lbl{color:#444}
+  .kpi-tile .val,.kpi-tile .sub{color:#111}
+  .no-print{display:none!important}
+  a{color:#000;text-decoration:underline}
+  .graphs{break-inside:avoid}
+  table{font-size:10pt}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="header-row">
     <div>
-      <p style="margin:0 0 4px;font-size:.7rem;text-transform:uppercase;color:#64748b">Weekly Business Operations Status Pack</p>
-      <h1 id="program" style="margin:0;font-size:1.75rem;color:#fff">Business Operations</h1>
-      <p style="margin:6px 0 0;color:#94a3b8;font-size:.9rem"><span id="period"></span> · <span id="report-date"></span></p>
+      <p style="margin:0 0 4px;font-size:.68rem;text-transform:uppercase;color:#64748b;letter-spacing:.06em">Weekly Business Operations Status Pack</p>
+      <h1 id="program" style="margin:0;font-size:1.6rem;color:#fff">Business Operations</h1>
+      <p style="margin:6px 0 0;color:#94a3b8;font-size:.88rem"><span id="period"></span></p>
     </div>
     <div class="badge-row">
       <div class="badge-block"><div class="lbl">Business health</div><span id="health-badge" class="badge"></span></div>
       <div class="badge-block"><div class="lbl">Delivery RAG</div><span id="overall-rag" class="badge"></span></div>
     </div>
   </div>
+  <p class="meta-line">Report date <strong id="report-date">—</strong> · Last refreshed <strong id="refreshed-at">—</strong> · <button type="button" class="no-print" onclick="window.print()" style="background:#1e293b;border:1px solid #334155;color:#cbd5e1;border-radius:6px;padding:3px 10px;font-size:.75rem;cursor:pointer">Print / PDF</button></p>
 
-  <div class="trend-callout">This page includes <strong>week-over-week trends</strong> (billable %, projects at risk, open actions) under the KPI graphs.</div>
+  <div id="dq-box" class="dq"><strong>Data quality</strong><ul id="dq-list"></ul></div>
 
   <p class="section-title">Key metrics</p>
   <div id="kpi-grid" class="kpi-grid"></div>
-  <p id="headcount-notes" style="font-size:.85rem;color:#94a3b8;margin:8px 0 0"></p>
+  <p id="headcount-notes" style="font-size:.82rem;color:#94a3b8;margin:8px 0 0"></p>
 
   <div class="graphs">
     <div class="glass graph-card"><h3>Billability vs target</h3><div id="graph-billable"></div></div>
-    <div class="glass graph-card"><h3>Project portfolio RAG</h3><div id="graph-projects" style="display:flex;flex-wrap:wrap;gap:16px;align-items:center"></div></div>
+    <div class="glass graph-card"><h3>Project portfolio RAG</h3><div id="graph-projects" style="display:flex;flex-wrap:wrap;gap:14px;align-items:center"></div></div>
     <div class="glass graph-card"><h3>Actions by urgency</h3><div id="graph-actions"></div></div>
   </div>
 
   <p class="section-title" style="color:#38bdf8">Week-over-week trends</p>
   <div class="graphs" style="margin-top:0">
-    <div class="glass graph-card"><h3>Billable % (8 weeks)</h3><div id="trend-billable"></div></div>
+    <div class="glass graph-card"><h3>Billable % (history)</h3><div id="trend-billable"></div></div>
     <div class="glass graph-card"><h3>Projects at risk</h3><div id="trend-risk"></div></div>
     <div class="glass graph-card"><h3>Open actions</h3><div id="trend-actions"></div></div>
   </div>
 
-  <div class="glass" style="padding:20px 24px;margin-bottom:24px">
+  <div class="glass" style="padding:18px 20px;margin-bottom:20px">
     <p class="section-title">Executive Summary</p>
-    <p id="summary" style="margin:0;line-height:1.6;color:#f1f5f9"></p>
+    <p id="summary" style="margin:0;line-height:1.55;color:#f1f5f9;font-size:.92rem"></p>
   </div>
 
   <p class="section-title">Program Status</p>
-  <div class="glass" style="overflow:hidden;margin-bottom:24px">
+  <div class="glass table-wrap" style="margin-bottom:20px">
     <table><thead><tr><th>Program</th><th>Owner</th><th>RAG</th><th>Next milestone</th><th>Update</th></tr></thead><tbody id="program-body"></tbody></table>
   </div>
 
+  <p class="section-title">All projects</p>
+  <div class="glass table-wrap" style="margin-bottom:20px">
+    <table><thead><tr><th>Project</th><th>Program</th><th>Owner</th><th>RAG</th><th>Target end</th><th>Billable</th><th>Update</th><th class="no-print">Link</th></tr></thead><tbody id="all-projects-body"></tbody></table>
+  </div>
+
   <p class="section-title" style="color:#fb923c">Projects at Risk</p>
-  <div id="at-risk-list" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px"></div>
+  <div id="at-risk-list" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px"></div>
+
+  <p class="section-title" style="color:#f87171">Overdue actions</p>
+  <div id="overdue-list" style="margin-bottom:20px"></div>
 
   <p class="section-title">Action Items</p>
-  <div class="glass" style="overflow:hidden;margin-bottom:24px">
-    <table><thead><tr><th>ID</th><th>Action</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th></tr></thead><tbody id="actions-body"></tbody></table>
+  <div class="filter-row no-print">
+    <label>Owner <select id="f-owner"><option value="">All</option></select></label>
+    <label>Priority <select id="f-pri"><option value="">All</option><option>High</option><option>Medium</option><option>Low</option></select></label>
+    <label>Status <select id="f-status"><option value="">All</option><option>Open</option><option>Scheduled</option><option>Done</option></select></label>
+    <label>Sort <select id="f-sort"><option value="due">Due date</option><option value="priority">Priority</option><option value="owner">Owner</option></select></label>
+  </div>
+  <div class="glass table-wrap" style="margin-bottom:20px">
+    <table><thead><tr><th>ID</th><th>Action</th><th>Owner</th><th>Due</th><th>Priority</th><th>Status</th><th class="no-print">Link</th></tr></thead><tbody id="actions-body"></tbody></table>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px">
-    <div class="glass" style="padding:20px"><p class="section-title" style="color:#34d399">Wins</p><ul id="wins" style="margin:0;padding:0;list-style:none"></ul></div>
-    <div class="glass" style="padding:20px"><p class="section-title" style="color:#38bdf8">Focus next week</p><ol id="focus" style="margin:0;padding-left:1.2rem;color:#cbd5e1;font-size:.875rem"></ol></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+    <div class="glass" style="padding:18px"><p class="section-title" style="color:#34d399">Wins</p><ul id="wins" style="margin:0;padding:0;list-style:none"></ul></div>
+    <div class="glass" style="padding:18px"><p class="section-title" style="color:#38bdf8">Focus next week</p><ol id="focus" style="margin:0;padding-left:1.15rem;color:#cbd5e1;font-size:.85rem"></ol></div>
   </div>
-  <p style="text-align:center;color:#64748b;font-size:.8rem">dashboard.html · trends included</p>
+  <p style="text-align:center;color:#64748b;font-size:.75rem">Weekly Ops Status Pack</p>
 </div>
 <script>
-const sample={"week_ending":"2026-07-25","report_date":"2026-07-25","period":"Week of 2026-07-21 to 2026-07-25","program":"Business Operations — Delivery & Enablement","overall_business_health":"Watch","overall_rag":"At Risk","executive_summary":"Business health Watch; delivery At Risk. Two client projects at risk. Billability 79% vs 85%. Priority: dated actions + move bench to billable seats.","headcount":{"total":28,"billable":22,"billable_pct":79,"target_billable_pct":85,"bench":3,"notes":"Below target; 3 on bench."},"metrics":{"active_projects":6,"projects_on_track":4,"projects_at_risk":2,"projects_blocked":0,"programs_at_risk":1,"open_actions":6,"high_priority_actions":3,"overdue_actions":0,"actions_due_7_days":5,"milestones_next_14_days":3},"programs":[{"name":"Client Delivery Portfolio","owner":"P. Sharma","rag":"At Risk","next_milestone":"2026-08-15","summary_line":"North Region + Platform at risk."},{"name":"AI & Automation Enablement","owner":"R. Prakasam","rag":"On Track","next_milestone":"2026-08-08","summary_line":"Pilots active."},{"name":"Finance Ops Close","owner":"L. Nguyen","rag":"On Track","next_milestone":"2026-08-05","summary_line":"Close on schedule."}],"projects_at_risk":[{"name":"North Region Q3","owner":"A. Chen","rag":"At Risk","target_end":"2026-09-30","summary_line":"UAT slip.","billable":true},{"name":"Platform Modernization","owner":"M. Patel","rag":"At Risk","target_end":"2026-08-29","summary_line":"CR pending.","billable":true}],"action_items":[{"id":"AI-01","action":"UAT fix plan","owner":"A. Chen","due":"2026-07-29","status":"Open","priority":"High"},{"id":"AI-02","action":"Submit Platform CR","owner":"M. Patel","due":"2026-07-30","status":"Open","priority":"High"},{"id":"AI-03","action":"Finance workshop","owner":"L. Nguyen","due":"2026-07-31","status":"Scheduled","priority":"Medium"},{"id":"AI-04","action":"Bench to South Region","owner":"P. Sharma","due":"2026-08-01","status":"Open","priority":"High"},{"id":"AI-05","action":"Pilot readout agenda","owner":"R. Prakasam","due":"2026-08-05","status":"Open","priority":"Medium"},{"id":"AI-06","action":"Invoice reconciliation","owner":"L. Nguyen","due":"2026-08-04","status":"Open","priority":"Medium"}],"wins":["3 teams trained","9/12 seats billable","Accruals done","Pack used Friday"],"focus_next_week":["Clear UAT + CR","Bench → billable","Protect close"]};
-const sampleHistory={"weeks":[{"week_ending":"2026-06-06","billable_pct":86,"projects_at_risk":1,"open_actions":4},{"week_ending":"2026-06-13","billable_pct":84,"projects_at_risk":1,"open_actions":5},{"week_ending":"2026-06-20","billable_pct":82,"projects_at_risk":2,"open_actions":6},{"week_ending":"2026-06-27","billable_pct":81,"projects_at_risk":2,"open_actions":7},{"week_ending":"2026-07-04","billable_pct":80,"projects_at_risk":2,"open_actions":6},{"week_ending":"2026-07-11","billable_pct":80,"projects_at_risk":3,"open_actions":8},{"week_ending":"2026-07-18","billable_pct":78,"projects_at_risk":2,"open_actions":7},{"week_ending":"2026-07-25","billable_pct":79,"projects_at_risk":2,"open_actions":6}]};
+const sample = {
+  week_ending: "2026-07-25",
+  report_date: "2026-07-25",
+  refreshed_at: "2026-07-25T14:05:00Z",
+  period: "Week of 2026-07-21 to 2026-07-25",
+  program: "Business Operations — Delivery & Enablement",
+  overall_business_health: "Watch",
+  overall_rag: "At Risk",
+  executive_summary: "Business health is Watch; delivery RAG is At Risk. Two client projects at risk. Billability 79% vs 85% target with three on bench. Priority: clear dated actions and move bench onto billable seats.",
+  headcount: { total: 28, billable: 22, non_billable: 6, billable_pct: 79, target_billable_pct: 85, bench: 3, notes: "Below target; 2 enablement, 1 leave, 3 bench." },
+  metrics: { active_projects: 6, projects_on_track: 4, projects_at_risk: 2, projects_blocked: 0, programs_at_risk: 1, open_actions: 6, high_priority_actions: 3, overdue_actions: 1, actions_due_7_days: 5, milestones_next_14_days: 3 },
+  programs: [
+    { name: "Client Delivery Portfolio", owner: "P. Sharma", rag: "At Risk", next_milestone: "2026-08-15", summary_line: "North Region + Platform at risk." },
+    { name: "AI & Automation Enablement", owner: "R. Prakasam", rag: "On Track", next_milestone: "2026-08-08", summary_line: "Pilots active." },
+    { name: "Finance Ops Close Support", owner: "L. Nguyen", rag: "On Track", next_milestone: "2026-08-05", summary_line: "Close on schedule." }
+  ],
+  projects: [
+    { name: "North Region Account — Q3", program: "Client Delivery Portfolio", owner: "A. Chen", rag: "At Risk", target_end: "2026-09-30", update: "M3 slipped; UAT unstable.", billable: true, url: "https://example.atlassian.net/browse/DEL-120" },
+    { name: "Platform Modernization", program: "Client Delivery Portfolio", owner: "M. Patel", rag: "At Risk", target_end: "2026-08-29", update: "Scope CR not approved.", billable: true, url: "https://example.atlassian.net/browse/DEL-88" },
+    { name: "Weekly Status Automation Pilot", program: "AI & Automation Enablement", owner: "R. Prakasam", rag: "On Track", target_end: "2026-08-08", update: "Demo pack live.", billable: false, url: "" },
+    { name: "Intake & Value Scoring", program: "AI & Automation Enablement", owner: "S. Okonkwo", rag: "On Track", target_end: "2026-09-15", update: "Form in test.", billable: false, url: "" },
+    { name: "July Month-End Close", program: "Finance Ops Close Support", owner: "L. Nguyen", rag: "On Track", target_end: "2026-08-05", update: "Checklist 60%.", billable: false, url: "" },
+    { name: "South Region Onboarding", program: "Client Delivery Portfolio", owner: "J. Wong", rag: "On Track", target_end: "2026-08-20", update: "9 of 12 seats billable.", billable: true, url: "https://example.atlassian.net/browse/DEL-201" }
+  ],
+  projects_at_risk: [
+    { name: "North Region Account — Q3", owner: "A. Chen", rag: "At Risk", target_end: "2026-09-30", summary_line: "M3 slipped; UAT unstable.", billable: true, url: "https://example.atlassian.net/browse/DEL-120" },
+    { name: "Platform Modernization", owner: "M. Patel", rag: "At Risk", target_end: "2026-08-29", summary_line: "Scope CR not approved.", billable: true, url: "https://example.atlassian.net/browse/DEL-88" }
+  ],
+  action_items: [
+    { id: "AI-01", action: "Confirm UAT fix plan with North Region client", owner: "A. Chen", due: "2026-07-22", status: "Open", priority: "High", url: "https://example.atlassian.net/browse/DEL-120" },
+    { id: "AI-02", action: "Submit CR for Platform Modernization reporting scope", owner: "M. Patel", due: "2026-07-30", status: "Open", priority: "High", url: "https://example.atlassian.net/browse/DEL-88" },
+    { id: "AI-03", action: "Finance SME workshop on invoice coding", owner: "L. Nguyen", due: "2026-07-31", status: "Scheduled", priority: "Medium", url: "" },
+    { id: "AI-04", action: "Reassign 2 bench resources to South Region", owner: "P. Sharma", due: "2026-08-01", status: "Open", priority: "High", url: "" },
+    { id: "AI-05", action: "Publish pilot value readout agenda", owner: "R. Prakasam", due: "2026-08-05", status: "Open", priority: "Medium", url: "" },
+    { id: "AI-06", action: "Close vendor invoice reconciliation", owner: "L. Nguyen", due: "2026-08-04", status: "Open", priority: "Medium", url: "" }
+  ],
+  wins: ["3 teams trained on status automation", "9 of 12 South Region seats billable", "Accruals review on schedule", "Status pack used in Friday review"],
+  focus_next_week: ["Clear UAT and Platform CR", "Move bench to billable seats", "Protect July close", "Hold non-critical internal work"]
+};
+const sampleHistory = { weeks: [
+  { week_ending: "2026-06-06", billable_pct: 86, projects_at_risk: 1, open_actions: 4 },
+  { week_ending: "2026-06-13", billable_pct: 84, projects_at_risk: 1, open_actions: 5 },
+  { week_ending: "2026-06-20", billable_pct: 82, projects_at_risk: 2, open_actions: 6 },
+  { week_ending: "2026-06-27", billable_pct: 81, projects_at_risk: 2, open_actions: 7 },
+  { week_ending: "2026-07-04", billable_pct: 80, projects_at_risk: 2, open_actions: 6 },
+  { week_ending: "2026-07-11", billable_pct: 80, projects_at_risk: 3, open_actions: 8 },
+  { week_ending: "2026-07-18", billable_pct: 78, projects_at_risk: 2, open_actions: 7 },
+  { week_ending: "2026-07-25", billable_pct: 79, projects_at_risk: 2, open_actions: 6 }
+]};
+
+let currentData = sample;
+let currentHistory = sampleHistory;
+
 function ragClass(r){r=(r||"").toLowerCase();if(r.indexOf("block")>=0)return"rag-blocked";if(r.indexOf("risk")>=0)return"rag-at-risk";return"rag-on-track"}
-function healthClass(h){h=(h||"").toLowerCase();if(h==="good")return"health-good";if(h==="poor")return"health-poor";return"health-watch"}
-function tile(v,l,s,c){return'<div class="kpi-tile"><div class="val" style="color:'+(c||"#f8fafc")+'">'+v+'</div><div class="lab">'+l+'</div>'+(s?'<div class="sub">'+s+'</div>':'')+'</div>'}
-function derive(data){var m=Object.assign({},data.metrics||{}),hc=data.headcount||{},a=data.action_items||[],p=data.programs||[],ar=data.projects_at_risk||[],rd=data.report_date||"2026-07-25";
-if(m.open_actions==null)m.open_actions=a.filter(function(x){return(x.status||"").toLowerCase()!="done"}).length;
-if(m.high_priority_actions==null)m.high_priority_actions=a.filter(function(x){return(x.priority||"").toLowerCase()==="high"}).length;
-if(m.overdue_actions==null)m.overdue_actions=a.filter(function(x){return x.due&&x.due<rd}).length;
-if(m.actions_due_7_days==null)m.actions_due_7_days=a.length;
-if(m.projects_at_risk==null)m.projects_at_risk=ar.length;
-if(m.projects_on_track==null)m.projects_on_track=Math.max(0,(m.active_projects||6)-(m.projects_at_risk||0));
-if(m.programs_at_risk==null)m.programs_at_risk=p.filter(function(x){return(x.rag||"").toLowerCase().indexOf("risk")>=0}).length;
-return{m:m,hc:hc}}
-function renderKpis(data){var d=derive(data),m=d.m,hc=d.hc,below=hc.billable_pct<hc.target_billable_pct;
-var h="";h+=tile(hc.billable_pct+"%","Billable %","Target "+hc.target_billable_pct+"%",below?"#fb923c":"#34d399");h+=tile(hc.bench,"Bench","Awaiting start","#fbbf24");h+=tile(m.projects_at_risk,"Projects at risk",m.active_projects+" active","#fb923c");h+=tile(m.programs_at_risk,"Programs at risk","Focus",m.programs_at_risk?"#fb923c":"#34d399");h+=tile(m.open_actions,"Open actions",m.high_priority_actions+" high","#fff");h+=tile(m.overdue_actions,"Overdue",m.overdue_actions?"Escalate":"None",m.overdue_actions?"#f87171":"#34d399");h+=tile(m.actions_due_7_days,"Due ≤7 days","This week","#fde68a");h+=tile(m.milestones_next_14_days,"Milestones ≤14d","Checkpoints","#7dd3fc");document.getElementById("kpi-grid").innerHTML=h}
-function renderGraphs(data){var d=derive(data),m=d.m,hc=d.hc,actual=hc.billable_pct||0,target=hc.target_billable_pct||100,gap=Math.max(0,target-actual),ac=actual<target?"#ea580c":"#16a34a";
-document.getElementById("graph-billable").innerHTML='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px"><span>Actual</span><span style="color:'+ac+';font-weight:600">'+actual+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+actual+'%;background:'+ac+'"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:.85rem;margin-bottom:6px"><span>Target</span><span>'+target+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+target+'%;background:#38bdf8"></div></div></div><p style="font-size:.75rem;color:#64748b;margin:8px 0 0">Gap: '+gap+' pts</p>';
-var ot=m.projects_on_track||0,ar=m.projects_at_risk||0,bl=m.projects_blocked||0,tp=ot+ar+bl||1,r=38,c=2*Math.PI*r,o=0,s="",l1=(ot/tp)*c,l2=(ar/tp)*c;
-if(ot){s+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="'+l1+' '+(c-l1)+'" stroke-dashoffset="0" transform="rotate(-90 48 48)"/>';o=l1}if(ar){s+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#ea580c" stroke-width="12" stroke-dasharray="'+l2+' '+(c-l2)+'" stroke-dashoffset="'+(-o)+'" transform="rotate(-90 48 48)"/>'}
-document.getElementById("graph-projects").innerHTML='<svg width="96" height="96" viewBox="0 0 96 96"><circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#1e293b" stroke-width="12"/>'+s+'<text x="48" y="52" text-anchor="middle" fill="#e2e8f0" font-size="15" font-weight="700">'+tp+'</text></svg><div style="font-size:.85rem"><div>On track: '+ot+'</div><div>At risk: '+ar+'</div><div>Blocked: '+bl+'</div></div>';
-var maxA=Math.max(m.open_actions,m.high_priority_actions,m.actions_due_7_days,m.overdue_actions,1);
-function ab(l,v,col){return'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:4px"><span style="color:#94a3b8">'+l+'</span><span>'+v+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(v/maxA*100)+'%;background:'+col+'"></div></div></div>'}
-document.getElementById("graph-actions").innerHTML=ab("Open",m.open_actions,"#94a3b8")+ab("High",m.high_priority_actions,"#ea580c")+ab("Due ≤7d",m.actions_due_7_days,"#facc15")+ab("Overdue",m.overdue_actions,m.overdue_actions?"#dc2626":"#16a34a")}
-function renderTrends(hist){var weeks=(hist&&hist.weeks)||[];function spark(vals,col,suf){var max=Math.max.apply(null,vals.concat([1])),min=Math.min.apply(null,vals),span=Math.max(max-min,1),w=280,h=72,pad=4,last=vals[vals.length-1];var bars=vals.map(function(v,i){var bw=(w-pad*2)/vals.length-2,x=pad+i*((w-pad*2)/vals.length),bh=((v-min)/span)*(h-pad*2),y=h-pad-bh;return'<rect x="'+x+'" y="'+y+'" width="'+Math.max(bw,2)+'" height="'+Math.max(bh,1)+'" fill="'+col+'" rx="2"/>'}).join("");var lab=weeks.map(function(x){return(x.week_ending||"").slice(5)});return'<div style="display:flex;justify-content:space-between;margin-bottom:8px"><span style="font-size:1.25rem;font-weight:700;color:'+col+'">'+last+(suf||"")+'</span><span style="font-size:.7rem;color:#64748b">'+lab[0]+' → '+lab[lab.length-1]+'</span></div><svg width="100%" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>'}document.getElementById("trend-billable").innerHTML=spark(weeks.map(function(w){return w.billable_pct||0}),"#38bdf8","%");document.getElementById("trend-risk").innerHTML=spark(weeks.map(function(w){return w.projects_at_risk||0}),"#fb923c","");document.getElementById("trend-actions").innerHTML=spark(weeks.map(function(w){return w.open_actions||0}),"#94a3b8","")}
-function render(data){document.getElementById("program").textContent=data.program;document.getElementById("period").textContent=data.period;document.getElementById("report-date").textContent=data.report_date;var hb=document.getElementById("health-badge");hb.textContent=data.overall_business_health;hb.className="badge "+healthClass(data.overall_business_health);var rg=document.getElementById("overall-rag");rg.textContent=data.overall_rag;rg.className="badge "+ragClass(data.overall_rag);renderKpis(data);renderGraphs(data);document.getElementById("headcount-notes").textContent=(data.headcount&&data.headcount.notes)||"";document.getElementById("summary").textContent=data.executive_summary;
-document.getElementById("program-body").innerHTML=(data.programs||[]).map(function(p){return"<tr><td style='color:#fff;font-weight:500'>"+p.name+"</td><td style='color:#94a3b8'>"+p.owner+"</td><td><span class='badge "+ragClass(p.rag)+"' style='font-size:.7rem;padding:2px 8px'>"+p.rag+"</span></td><td style='color:#94a3b8'>"+p.next_milestone+"</td><td style='color:#cbd5e1'>"+p.summary_line+"</td></tr>"}).join("");
-document.getElementById("at-risk-list").innerHTML=(data.projects_at_risk||[]).map(function(p){return'<div class="glass" style="padding:16px;border-left:4px solid #ea580c"><strong style="color:#fff">'+p.name+'</strong> <span class="badge '+ragClass(p.rag)+'" style="font-size:.7rem;padding:2px 8px">'+p.rag+'</span><div style="font-size:.75rem;color:#94a3b8;margin:6px 0">'+p.owner+' · '+p.target_end+'</div><p style="margin:0;font-size:.85rem;color:#cbd5e1">'+p.summary_line+'</p></div>'}).join("");
-document.getElementById("actions-body").innerHTML=(data.action_items||[]).map(function(a){return"<tr><td style='color:#64748b'>"+a.id+"</td><td>"+a.action+"</td><td style='color:#94a3b8'>"+a.owner+"</td><td>"+a.due+"</td><td class='"+(a.priority==="High"?"pri-high":"pri-medium")+"'>"+a.priority+"</td><td style='color:#94a3b8'>"+a.status+"</td></tr>"}).join("");
-document.getElementById("wins").innerHTML=(data.wins||[]).map(function(x){return'<li style="margin-bottom:8px;font-size:.875rem;color:#cbd5e1">✓ '+x+'</li>'}).join("");
-document.getElementById("focus").innerHTML=(data.focus_next_week||[]).map(function(x){return"<li style='margin-bottom:8px'>"+x+"</li>"}).join("")}
-render(sample);renderTrends(sampleHistory);
+function healthClass(h){h=(h||"").toLowerCase();if(h==="good"||h==="healthy")return"health-good";if(h==="poor"||h==="critical")return"health-poor";return"health-watch"}
+function fmtDelta(curr, prev, invert){
+  if(curr==null||prev==null)return'<span class="delta delta-flat">vs prior —</span>';
+  var d = curr - prev;
+  if(d===0)return'<span class="delta delta-flat">vs prior 0</span>';
+  var bad = invert ? d > 0 : d < 0;
+  var cls = bad ? "delta-up" : "delta-down";
+  var sign = d > 0 ? "+" : "";
+  return '<span class="delta '+cls+'">vs prior '+sign+d+'</span>';
+}
+function priorWeek(history){
+  var w = (history && history.weeks) || [];
+  if(w.length < 2) return null;
+  return w[w.length - 2];
+}
+function tile(v,l,s,c,deltaHtml){
+  return '<div class="kpi-tile"><div class="val" style="color:'+(c||"#f8fafc")+'">'+v+'</div><div class="lab">'+l+'</div>'+
+    (s?'<div class="sub">'+s+'</div>':'')+(deltaHtml||'')+'</div>';
+}
+function derive(data){
+  var m=Object.assign({},data.metrics||{}),hc=data.headcount||{},actions=data.action_items||[],programs=data.programs||[],atRisk=data.projects_at_risk||[],projects=data.projects||[],rd=data.report_date||data.week_ending||"2026-07-25";
+  if(m.open_actions==null)m.open_actions=actions.filter(function(a){return(a.status||"").toLowerCase()!="done"&&(a.status||"").toLowerCase()!="closed"}).length;
+  if(m.high_priority_actions==null)m.high_priority_actions=actions.filter(function(a){return(a.priority||"").toLowerCase()==="high"}).length;
+  if(m.overdue_actions==null)m.overdue_actions=actions.filter(function(a){return a.due&&a.due<rd&&(a.status||"").toLowerCase()!="done"&&(a.status||"").toLowerCase()!="closed"}).length;
+  if(m.actions_due_7_days==null)m.actions_due_7_days=actions.filter(function(a){return a.due&&a.due>=rd}).length;
+  if(m.projects_at_risk==null)m.projects_at_risk=atRisk.length||projects.filter(function(p){return(p.rag||"").toLowerCase().indexOf("risk")>=0||(p.rag||"").toLowerCase().indexOf("block")>=0}).length;
+  if(m.active_projects==null)m.active_projects=projects.length||null;
+  if(m.projects_on_track==null&&m.active_projects!=null)m.projects_on_track=Math.max(0,m.active_projects-(m.projects_at_risk||0)-(m.projects_blocked||0));
+  if(m.programs_at_risk==null)m.programs_at_risk=programs.filter(function(p){return(p.rag||"").toLowerCase().indexOf("risk")>=0||(p.rag||"").toLowerCase().indexOf("block")>=0}).length;
+  return{m:m,hc:hc,rd:rd};
+}
+function dataQuality(data){
+  var issues=[],actions=data.action_items||[],projects=data.projects||data.projects_at_risk||[],programs=data.programs||[],rd=data.report_date||data.week_ending||"";
+  actions.forEach(function(a){
+    if(!a.owner)issues.push("Action "+(a.id||"?")+" missing owner");
+    if(!a.due)issues.push("Action "+(a.id||"?")+" missing due date");
+    if(a.due&&a.due<rd&&(a.status||"").toLowerCase()!=="done")issues.push("Action "+(a.id||"")+" overdue ("+a.due+")");
+  });
+  projects.forEach(function(p){
+    if(!p.owner)issues.push("Project \""+(p.name||"?")+"\" missing owner");
+    var rag=(p.rag||"").toLowerCase();
+    if(rag&&rag.indexOf("track")<0&&rag.indexOf("risk")<0&&rag.indexOf("block")<0)issues.push("Project \""+(p.name||"?")+"\" has non-standard RAG: "+p.rag);
+  });
+  programs.forEach(function(p){if(!p.owner)issues.push("Program \""+(p.name||"?")+"\" missing owner")});
+  if(data.headcount&&data.headcount.billable_pct==null)issues.push("Billable % not provided");
+  return issues;
+}
+function renderKpis(data,history){
+  var d=derive(data),m=d.m,hc=d.hc,prev=priorWeek(history);
+  var below=hc.billable_pct!=null&&hc.target_billable_pct!=null&&hc.billable_pct<hc.target_billable_pct;
+  var html="";
+  html+=tile(hc.billable_pct!=null?hc.billable_pct+"%":"—","Billable %","Target "+(hc.target_billable_pct!=null?hc.target_billable_pct+"%":"—"),below?"#fb923c":"#34d399",fmtDelta(hc.billable_pct,prev&&prev.billable_pct,false));
+  html+=tile(hc.bench!=null?hc.bench:"—","Bench","Awaiting client start","#fbbf24",fmtDelta(hc.bench,prev&&prev.bench,true));
+  html+=tile(m.projects_at_risk!=null?m.projects_at_risk:"—","Projects at risk",m.active_projects!=null?m.active_projects+" active":"","#fb923c",fmtDelta(m.projects_at_risk,prev&&prev.projects_at_risk,true));
+  html+=tile(m.programs_at_risk!=null?m.programs_at_risk:"—","Programs at risk","Leadership focus",m.programs_at_risk?"#fb923c":"#34d399","");
+  html+=tile(m.open_actions!=null?m.open_actions:"—","Open actions",m.high_priority_actions!=null?m.high_priority_actions+" high":"","#f8fafc",fmtDelta(m.open_actions,prev&&prev.open_actions,true));
+  html+=tile(m.overdue_actions!=null?m.overdue_actions:"—","Overdue actions",m.overdue_actions?"Escalate":"None past due",m.overdue_actions?"#f87171":"#34d399",fmtDelta(m.overdue_actions,prev&&prev.overdue_actions,true));
+  html+=tile(m.actions_due_7_days!=null?m.actions_due_7_days:"—","Actions due ≤7 days","Including this week","#fde68a","");
+  html+=tile(m.milestones_next_14_days!=null?m.milestones_next_14_days:"—","Milestones ≤14 days","Program checkpoints","#7dd3fc","");
+  document.getElementById("kpi-grid").innerHTML=html;
+}
+function renderGraphs(data){
+  var d=derive(data),m=d.m,hc=d.hc;
+  var actual=hc.billable_pct||0,target=hc.target_billable_pct||100,gap=Math.max(0,target-actual),ac=actual<target?"#ea580c":"#16a34a";
+  document.getElementById("graph-billable").innerHTML='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px"><span>Actual</span><span style="font-weight:600;color:'+ac+'">'+actual+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(actual,100)+'%;background:'+ac+'"></div></div></div><div><div style="display:flex;justify-content:space-between;font-size:.82rem;margin-bottom:5px"><span>Target</span><span style="color:#94a3b8">'+target+'%</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.min(target,100)+'%;background:#38bdf8"></div></div></div><p style="font-size:.72rem;color:#64748b;margin:8px 0 0">Gap: '+gap+' pts</p>';
+  var onTrack=m.projects_on_track||0,atRisk=m.projects_at_risk||0,blocked=m.projects_blocked||0,totalP=onTrack+atRisk+blocked||1,r=36,circ=2*Math.PI*r,off=0,slices="",lenOT=(onTrack/totalP)*circ,lenAR=(atRisk/totalP)*circ;
+  if(onTrack>0){slices+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#16a34a" stroke-width="12" stroke-dasharray="'+lenOT+' '+(circ-lenOT)+'" stroke-dashoffset="0" transform="rotate(-90 48 48)"/>';off=lenOT}
+  if(atRisk>0){slices+='<circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#ea580c" stroke-width="12" stroke-dasharray="'+lenAR+' '+(circ-lenAR)+'" stroke-dashoffset="'+(-off)+'" transform="rotate(-90 48 48)"/>'}
+  document.getElementById("graph-projects").innerHTML='<svg width="90" height="90" viewBox="0 0 96 96"><circle cx="48" cy="48" r="'+r+'" fill="none" stroke="#1e293b" stroke-width="12"/>'+slices+'<text x="48" y="52" text-anchor="middle" fill="#e2e8f0" font-size="14" font-weight="700">'+totalP+'</text></svg><div style="font-size:.82rem"><div>On track: '+onTrack+'</div><div>At risk: '+atRisk+'</div><div>Blocked: '+blocked+'</div></div>';
+  var openA=m.open_actions||0,highA=m.high_priority_actions||0,due7=m.actions_due_7_days||0,overdue=m.overdue_actions||0,maxA=Math.max(openA,highA,due7,overdue,1);
+  function ab(l,v,c){return'<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:.72rem;margin-bottom:3px"><span style="color:#94a3b8">'+l+'</span><span>'+v+'</span></div><div class="bar-track"><div class="bar-fill" style="width:'+Math.round(v/maxA*100)+'%;background:'+c+'"></div></div></div>'}
+  document.getElementById("graph-actions").innerHTML=ab("Open",openA,"#94a3b8")+ab("High priority",highA,"#ea580c")+ab("Due ≤7 days",due7,"#facc15")+ab("Overdue",overdue,overdue?"#dc2626":"#16a34a");
+}
+function renderTrends(history){
+  var weeks=(history&&history.weeks)||[];
+  if(!weeks.length){document.getElementById("trend-billable").innerHTML="<p style='color:#64748b;font-size:.82rem'>No history yet</p>";return}
+  function spark(values,color,suffix){
+    var max=Math.max.apply(null,values.concat([1])),min=Math.min.apply(null,values),span=Math.max(max-min,1),w=280,h=64,pad=4,last=values[values.length-1];
+    var bars=values.map(function(v,i){var bw=(w-pad*2)/values.length-2,x=pad+i*((w-pad*2)/values.length),bh=((v-min)/span)*(h-pad*2),y=h-pad-bh;return'<rect x="'+x+'" y="'+y+'" width="'+Math.max(bw,2)+'" height="'+Math.max(bh,1)+'" fill="'+color+'" rx="2"/>'}).join("");
+    var labels=weeks.map(function(wk){return(wk.week_ending||"").slice(5)});
+    return'<div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="font-size:1.2rem;font-weight:700;color:'+color+'">'+last+(suffix||"")+'</span><span style="font-size:.68rem;color:#64748b">'+labels[0]+' → '+labels[labels.length-1]+'</span></div><svg width="100%" viewBox="0 0 '+w+' '+h+'">'+bars+'</svg>';
+  }
+  document.getElementById("trend-billable").innerHTML=spark(weeks.map(function(w){return w.billable_pct||0}),"#38bdf8","%");
+  document.getElementById("trend-risk").innerHTML=spark(weeks.map(function(w){return w.projects_at_risk||0}),"#fb923c","");
+  document.getElementById("trend-actions").innerHTML=spark(weeks.map(function(w){return w.open_actions||0}),"#94a3b8","");
+}
+function linkCell(url){
+  if(!url)return'<span style="color:#475569">—</span>';
+  return'<a class="proj-link" href="'+url+'" target="_blank" rel="noopener">Open</a>';
+}
+function renderOverdue(data){
+  var rd=data.report_date||data.week_ending||"";
+  var overdue=(data.action_items||[]).filter(function(a){return a.due&&a.due<rd&&(a.status||"").toLowerCase()!="done"&&(a.status||"").toLowerCase()!="closed"});
+  var el=document.getElementById("overdue-list");
+  if(!overdue.length){el.innerHTML='<p style="color:#34d399;font-size:.85rem;margin:0">None past due.</p>';return}
+  el.innerHTML=overdue.map(function(a){
+    return'<div class="glass overdue-card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><strong style="color:#fff;font-size:.88rem">'+(a.id?a.id+' · ':'')+a.action+'</strong><span style="color:#f87171;font-size:.78rem">Due '+a.due+'</span></div>'+
+      '<div style="font-size:.75rem;color:#94a3b8;margin-top:4px">Owner: '+(a.owner||"—")+' · '+(a.priority||"")+' · '+(a.status||"")+(a.url?' · <a href="'+a.url+'" target="_blank" rel="noopener">Source</a>':'')+'</div></div>';
+  }).join("");
+}
+function renderActions(data){
+  var actions=(data.action_items||[]).slice();
+  var owner=document.getElementById("f-owner").value;
+  var pri=document.getElementById("f-pri").value;
+  var st=document.getElementById("f-status").value;
+  var sort=document.getElementById("f-sort").value;
+  if(owner)actions=actions.filter(function(a){return a.owner===owner});
+  if(pri)actions=actions.filter(function(a){return(a.priority||"")===pri});
+  if(st)actions=actions.filter(function(a){return(a.status||"")===st});
+  var priRank={High:0,Medium:1,Low:2};
+  actions.sort(function(a,b){
+    if(sort==="priority")return(priRank[a.priority]||9)-(priRank[b.priority]||9);
+    if(sort==="owner")return(a.owner||"").localeCompare(b.owner||"");
+    return(a.due||"").localeCompare(b.due||"");
+  });
+  var rd=data.report_date||data.week_ending||"";
+  document.getElementById("actions-body").innerHTML=actions.map(function(a){
+    var late=a.due&&a.due<rd&&(a.status||"").toLowerCase()!="done";
+    var pc=(a.priority||"").toLowerCase()==="high"?"pri-high":(a.priority||"").toLowerCase()==="low"?"pri-low":"pri-medium";
+    return"<tr>"+
+      "<td style='color:#64748b'>"+(a.id||"")+"</td>"+
+      "<td style='color:#e2e8f0'>"+(a.action||"")+"</td>"+
+      "<td style='color:#94a3b8'>"+(a.owner||"")+"</td>"+
+      "<td style='color:"+(late?"#f87171":"#cbd5e1")+";white-space:nowrap'>"+(a.due||"")+(late?" · overdue":"")+"</td>"+
+      "<td class='"+pc+"'>"+(a.priority||"")+"</td>"+
+      "<td style='color:#94a3b8'>"+(a.status||"")+"</td>"+
+      "<td class='no-print'>"+linkCell(a.url)+"</td></tr>";
+  }).join("")||"<tr><td colspan='7' style='color:#64748b'>No matching actions</td></tr>";
+}
+function fillOwnerFilter(data){
+  var sel=document.getElementById("f-owner");
+  var owners={};
+  (data.action_items||[]).forEach(function(a){if(a.owner)owners[a.owner]=1});
+  var cur=sel.value;
+  sel.innerHTML='<option value="">All</option>'+Object.keys(owners).sort().map(function(o){return'<option>'+o+'</option>'}).join("");
+  sel.value=cur;
+}
+function render(data,history){
+  currentData=data;currentHistory=history||currentHistory;
+  document.getElementById("program").textContent=data.program||"Business Operations";
+  document.getElementById("period").textContent=data.period||("Week ending "+(data.week_ending||""));
+  document.getElementById("report-date").textContent=data.report_date||data.week_ending||"—";
+  var ref=data.refreshed_at||data.report_date||data.week_ending||"";
+  try{if(ref.indexOf("T")>0)ref=new Date(ref).toLocaleString()}catch(e){}
+  document.getElementById("refreshed-at").textContent=ref||"—";
+  var health=document.getElementById("health-badge");health.textContent=data.overall_business_health||"—";health.className="badge "+healthClass(data.overall_business_health);
+  var badge=document.getElementById("overall-rag");badge.textContent=data.overall_rag||"";badge.className="badge "+ragClass(data.overall_rag);
+  renderKpis(data,currentHistory);renderGraphs(data);renderTrends(currentHistory);
+  document.getElementById("headcount-notes").textContent=(data.headcount&&data.headcount.notes)||"";
+  document.getElementById("summary").textContent=data.executive_summary||"";
+
+  var issues=dataQuality(data);
+  var dq=document.getElementById("dq-box");
+  if(issues.length){dq.style.display="block";document.getElementById("dq-list").innerHTML=issues.map(function(i){return"<li>"+i+"</li>"}).join("")}else{dq.style.display="none"}
+
+  document.getElementById("program-body").innerHTML=(data.programs||[]).map(function(p){
+    return"<tr><td style='color:#fff;font-weight:500'>"+p.name+"</td><td style='color:#94a3b8'>"+(p.owner||"")+"</td><td><span class='badge "+ragClass(p.rag)+"' style='font-size:.7rem;padding:2px 8px'>"+p.rag+"</span></td><td style='color:#94a3b8;white-space:nowrap'>"+(p.next_milestone||"")+"</td><td style='color:#cbd5e1'>"+(p.summary_line||p.update||"")+"</td></tr>";
+  }).join("");
+
+  var projects=data.projects||[];
+  if(!projects.length&&(data.projects_at_risk||[]).length){
+    projects=(data.projects_at_risk||[]).map(function(p){return{name:p.name,program:"",owner:p.owner,rag:p.rag,target_end:p.target_end,update:p.summary_line,billable:p.billable,url:p.url}});
+  }
+  document.getElementById("all-projects-body").innerHTML=projects.map(function(p){
+    return"<tr><td style='color:#fff;font-weight:500'>"+p.name+"</td><td style='color:#94a3b8'>"+(p.program||"")+"</td><td style='color:#94a3b8'>"+(p.owner||"")+"</td><td><span class='badge "+ragClass(p.rag)+"' style='font-size:.7rem;padding:2px 8px'>"+p.rag+"</span></td><td style='color:#94a3b8;white-space:nowrap'>"+(p.target_end||"")+"</td><td style='color:#cbd5e1'>"+(p.billable?"Yes":"No")+"</td><td style='color:#cbd5e1'>"+(p.update||p.summary_line||"")+"</td><td class='no-print'>"+linkCell(p.url)+"</td></tr>";
+  }).join("")||"<tr><td colspan='8' style='color:#64748b'>No projects</td></tr>";
+
+  document.getElementById("at-risk-list").innerHTML=(data.projects_at_risk||[]).map(function(p){
+    return'<div class="glass" style="padding:14px;border-left:4px solid #ea580c"><div style="display:flex;justify-content:space-between;gap:8px"><strong style="color:#fff;font-size:.88rem">'+p.name+'</strong><span class="badge '+ragClass(p.rag)+'" style="font-size:.7rem;padding:2px 8px">'+p.rag+'</span></div><div style="font-size:.72rem;color:#94a3b8;margin:6px 0">'+(p.owner||"")+' · '+(p.target_end||"")+' · '+(p.billable?"Billable":"Non-billable")+(p.url?' · <a class="proj-link" href="'+p.url+'" target="_blank" rel="noopener">Source</a>':'')+'</div><p style="margin:0;font-size:.84rem;color:#cbd5e1">'+(p.summary_line||"")+'</p></div>';
+  }).join("")||'<p style="color:#64748b;font-size:.85rem">None</p>';
+
+  renderOverdue(data);
+  fillOwnerFilter(data);
+  renderActions(data);
+
+  document.getElementById("wins").innerHTML=(data.wins||[]).map(function(x){return'<li style="display:flex;gap:8px;margin-bottom:7px;font-size:.84rem;color:#cbd5e1"><span style="color:#34d399">✓</span><span>'+x+'</span></li>'}).join("");
+  document.getElementById("focus").innerHTML=(data.focus_next_week||[]).map(function(x){return"<li style='margin-bottom:7px'>"+x+"</li>"}).join("");
+}
+
+["f-owner","f-pri","f-status","f-sort"].forEach(function(id){
+  document.getElementById(id).addEventListener("change",function(){renderActions(currentData)});
+});
+
+render(sample, sampleHistory);
+fetch("history.json?v=5").then(function(r){return r.ok?r.json():null}).then(function(h){if(h&&h.weeks){currentHistory=h;renderTrends(h);renderKpis(currentData,h)}}).catch(function(){});
+fetch("status_pack.json?v=5").then(function(r){return r.ok?r.json():null}).then(function(d){if(d&&(d.programs||d.action_items||d.projects))render(d,currentHistory)}).catch(function(){});
 </script>
 </body>
 </html>
