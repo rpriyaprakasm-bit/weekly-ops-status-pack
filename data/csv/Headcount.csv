@@ -1,0 +1,2 @@
+total,billable,non_billable,billable_pct,target_billable_pct,bench,notes
+28,22,6,79,85,3,"Below target; 2 internal enablement, 1 leave coverage, 3 bench"

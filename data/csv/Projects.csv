@@ -1,0 +1,7 @@
+name,program,owner,rag,start,target_end,update,billable
+"North Region Account — Q3 Delivery","Client Delivery Portfolio",A. Chen,At Risk,2026-05-01,2026-09-30,"M3 slipped 8 days; UAT unstable.",Yes
+"Platform Modernization (Fixed Price)","Client Delivery Portfolio",M. Patel,At Risk,2026-03-15,2026-08-29,"Scope CR not yet approved.",Yes
+"Weekly Status Automation Pilot","AI & Automation Enablement",R. Prakasam,On Track,2026-07-01,2026-08-08,"Demo pack live for Friday review.",No
+"Intake & Value Scoring Rollout","AI & Automation Enablement",S. Okonkwo,On Track,2026-07-10,2026-09-15,"Scoring rubric agreed; form in test.",No
+"July Month-End Close","Finance Ops Close Support",L. Nguyen,On Track,2026-07-25,2026-08-05,"Checklist 60% complete.",No
+"South Region Onboarding Wave","Client Delivery Portfolio",J. Wong,On Track,2026-07-01,2026-08-20,"9 of 12 seats confirmed billable.",Yes

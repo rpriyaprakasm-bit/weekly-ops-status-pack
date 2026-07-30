@@ -1,0 +1,7 @@
+id,action,owner,due,priority,status
+AI-01,"Confirm UAT fix plan with North Region client",A. Chen,2026-07-29,High,Open
+AI-02,"Submit CR for Platform Modernization reporting scope",M. Patel,2026-07-30,High,Open
+AI-03,"Finance SME workshop on invoice coding (90 min)",L. Nguyen,2026-07-31,Medium,Scheduled
+AI-04,"Reassign 2 bench resources to South Region (billable)",P. Sharma,2026-08-01,High,Open
+AI-05,"Publish pilot value readout agenda",R. Prakasam,2026-08-05,Medium,Open
+AI-06,"Close vendor invoice reconciliation for July close",L. Nguyen,2026-08-04,Medium,Open

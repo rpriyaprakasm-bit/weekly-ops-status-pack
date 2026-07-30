@@ -1,0 +1,8 @@
+{
+  "jql": "project in (OPS, DELIVERY) AND status != Done AND updated >= -14d ORDER BY priority DESC",
+  "rag_field": "customfield_10020",
+  "billable_label": "billable",
+  "action_label": "action-item",
+  "max_results": 50,
+  "notes": "Set JIRA_BASE_URL (e.g. https://yourorg.atlassian.net), JIRA_EMAIL, JIRA_API_TOKEN as Actions secrets. Adjust JQL and field IDs to your instance."
+}
