@@ -80,26 +80,24 @@ Content-Type: application/json
 
 ```text
 Weekly Ops Status Pack has been triggered for @{formatDateTime(utcNow(), 'yyyy-MM-dd')}.
-Dashboard: https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status-v2.html
+Dashboard: https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/dashboard.html
 Actions: https://github.com/rpriyaprakasm-bit/weekly-ops-status-pack/actions
 ```
 
 ---
 
-## Flow B — SharePoint → then trigger (recommended for BO)
+## Flow B — SharePoint → then trigger
 
 1. **Recurrence** — Friday morning  
 2. **SharePoint — Get items** (or **List folder** / get Excel file)  
 3. **Create CSV table** or **Update file** in a location the repo can read  
-   - Simple path: export attachment to email for an analyst, **or**  
-   - Advanced: commit file via GitHub API / sync tool into `data/csv/`  
 4. **HTTP repository_dispatch** (same as Flow A) with `input_source: excel`  
-5. **Teams** — “Inputs refreshed from SharePoint; status pack running”
+5. **Teams** — inputs refreshed; status pack running  
 
-If SharePoint is only the editor’s UI, a lighter pattern is:
+Lighter cadence:
 
 ```text
-Friday 8:30  Reminder in Teams: “Update the ops Excel / list”
+Friday 8:30  Reminder: update the ops Excel / list
 Friday 9:30  Power Automate dispatch → GitHub builds the pack
 Friday 10:00 Ops review uses the dashboard
 ```
@@ -108,13 +106,9 @@ Friday 10:00 Ops review uses the dashboard
 
 ## Flow C — After pack: notify with summary
 
-GitHub Actions commits `docs/status_pack.md` / JSON. Power Automate cannot easily read the private commit unless you add a second step:
-
-1. Use **GitHub connector** or HTTP GET  
+1. HTTP GET  
    `https://raw.githubusercontent.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status_pack.json`  
 2. Parse JSON → post **Executive Summary** + **overall_rag** to Teams.
-
-Example Teams message body:
 
 ```text
 **Weekly Ops Status**
@@ -123,17 +117,19 @@ RAG: @{body('Parse_JSON')?['overall_rag']}
 
 @{body('Parse_JSON')?['executive_summary']}
 
-Dashboard: https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/status-v2.html
+Dashboard: https://raw.githack.com/rpriyaprakasm-bit/weekly-ops-status-pack/main/docs/dashboard.html
 ```
 
 (Add a short **Delay** after dispatch so the Action can finish and push.)
+
+Alternatively use repo secret `TEAMS_WEBHOOK_URL` — the GitHub Action posts a MessageCard automatically after publish.
 
 ---
 
 ## Test without waiting for Friday
 
 1. In Power Automate: **Test → Manually**  
-2. Or from terminal:
+2. Or:
 
 ```bash
 curl -X POST \
@@ -144,18 +140,12 @@ curl -X POST \
   -d '{"event_type":"weekly-ops-status","client_payload":{"input_source":"excel"}}'
 ```
 
-3. Check **Actions** tab — workflow should start with event `repository_dispatch`.
+3. Check **Actions** — event `repository_dispatch`.
 
 ---
 
 ## Security notes
 
-- Prefer a **dedicated PAT** with access only to this repo; rotate if leaked.
-- Do not put the PAT in the flow’s run history screenshots for portfolio posts.
-- For company tenants, use a **service account** + Azure Key Vault reference if your CoE requires it.
-
----
-
-## What to say in interviews
-
-> *Power Automate runs every Friday, optionally refreshes inputs from SharePoint, then calls GitHub repository_dispatch. Actions collect Excel/Jira data, Grok drafts the pack, and Teams gets a link to the dashboard—same pattern as other governed ops automations.*
+- Prefer a **dedicated PAT** limited to this repo; rotate if leaked.
+- Do not commit the PAT or paste it into public screenshots.
+- In enterprise tenants, prefer a service account + Key Vault if required by policy.
