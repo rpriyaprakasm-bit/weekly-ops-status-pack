@@ -12,7 +12,28 @@
     "non_billable": 6,
     "billable_pct": 79,
     "target_billable_pct": 85,
+    "bench": 3,
+    "on_leave_or_coverage": 1,
+    "internal_enablement": 2,
     "notes": "Below target; 2 on internal enablement, 1 leave coverage, 3 bench pending client start."
+  },
+  "metrics": {
+    "active_projects": 6,
+    "projects_on_track": 4,
+    "projects_at_risk": 2,
+    "projects_blocked": 0,
+    "programs_total": 3,
+    "programs_on_track": 2,
+    "programs_at_risk": 1,
+    "open_actions": 6,
+    "high_priority_actions": 3,
+    "overdue_actions": 0,
+    "actions_due_7_days": 5,
+    "milestones_next_14_days": 3,
+    "wins_this_week": 4,
+    "client_projects": 3,
+    "internal_projects": 3,
+    "utilization_gap_pct": 6
   },
   "programs": [
     {
