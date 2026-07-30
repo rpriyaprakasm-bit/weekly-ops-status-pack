@@ -1,8 +1,11 @@
 name: Weekly Ops Status Pack
 
 on:
+  # Native GitHub schedule (Friday 14:00 UTC)
   schedule:
     - cron: "0 14 * * 5"
+
+  # Manual run from Actions tab
   workflow_dispatch:
     inputs:
       input_source:
@@ -14,6 +17,12 @@ on:
           - excel
           - jira
           - excel+jira
+
+  # Power Automate (or any HTTP client) — Friday flow calls this
+  # POST /repos/{owner}/{repo}/dispatches
+  # body: { "event_type": "weekly-ops-status", "client_payload": { "input_source": "excel" } }
+  repository_dispatch:
+    types: [weekly-ops-status]
 
 permissions:
   contents: write
@@ -34,9 +43,23 @@ jobs:
       - name: Install dependencies
         run: pip install openai openpyxl
 
+      - name: Resolve input source
+        id: src
+        run: |
+          # Priority: workflow_dispatch input → repository_dispatch payload → default excel
+          SRC="${{ github.event.inputs.input_source }}"
+          if [ -z "$SRC" ] || [ "$SRC" = "" ]; then
+            SRC="${{ github.event.client_payload.input_source }}"
+          fi
+          if [ -z "$SRC" ] || [ "$SRC" = "" ]; then
+            SRC="excel"
+          fi
+          echo "input_source=$SRC" >> "$GITHUB_OUTPUT"
+          echo "Using INPUT_SOURCE=$SRC"
+
       - name: Collect inputs (Excel / CSV / Jira)
         env:
-          INPUT_SOURCE: ${{ github.event.inputs.input_source || 'excel' }}
+          INPUT_SOURCE: ${{ steps.src.outputs.input_source }}
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_EMAIL: ${{ secrets.JIRA_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
